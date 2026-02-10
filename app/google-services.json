@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "94161330526",
+    "project_id": "zapzap-8d536",
+    "storage_bucket": "zapzap-8d536.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94161330526:android:3aa17ab12464b626a86fcf",
+        "android_client_info": {
+          "package_name": "com.example.agizap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY0Ne-5vbHa1-UftvMrX2vqi-hoXweYkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
