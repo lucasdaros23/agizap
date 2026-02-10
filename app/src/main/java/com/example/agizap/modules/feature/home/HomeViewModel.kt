@@ -56,9 +56,9 @@ class HomeViewModel (
         updateChats()
     }
 
-    fun onTextFieldChange(novoTexto: String){
+    fun onTextFieldChange(value: String){
         _uiState.value = uiState.value.copy(
-            textField = novoTexto
+            textField = value
         )
     }
 
