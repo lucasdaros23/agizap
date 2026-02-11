@@ -7,5 +7,6 @@ data class HomeUiState(
     val textField: String = "",
     val users: List<User> = emptyList(),
     val chats: List<Chat> = emptyList(),
-    val showAlert: Boolean = false
+    val showAlert: Boolean = false,
+    val currentUser: User = User()
 )

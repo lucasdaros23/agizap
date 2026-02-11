@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agizap.R
 import com.example.agizap.model.Chat
-import com.example.agizap.modules.component.ImageComponent
-import com.example.agizap.modules.component.VisualizadoIcon
+import com.example.agizap.modules.components.ImageComponent
+import com.example.agizap.modules.components.VisualizadoIcon
 
 @Composable
 fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, checkSent: Boolean) {

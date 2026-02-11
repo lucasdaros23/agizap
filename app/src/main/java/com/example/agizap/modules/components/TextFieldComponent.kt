@@ -1,4 +1,4 @@
-package com.example.agizap.modules.component
+package com.example.agizap.modules.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme

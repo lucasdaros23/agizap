@@ -9,14 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.agizap.R
-import com.example.agizap.modules.component.IconButtonComponent
+import com.example.agizap.modules.components.IconButtonComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarHome(onClick1: () -> Unit, onClick2: () -> Unit) {
     Column() {
         TopAppBar(
-            title = { Text(text = "Whatsapp", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold) },
+            title = { Text(text = "Agizap", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold) },
             actions = {
                 IconButtonComponent(
                     painter = painterResource(R.drawable.camera),

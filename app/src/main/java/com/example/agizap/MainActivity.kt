@@ -27,7 +27,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AgizapTheme {
+            // Disable dynamicColor to use the custom color scheme defined in ui.theme
+            AgizapTheme(dynamicColor = false) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController: NavHostController = rememberNavController()
                     val homeViewModel: HomeViewModel = viewModel()

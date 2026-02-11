@@ -2,6 +2,7 @@ package com.example.agizap.modules.feature.home
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.example.agizap.modules.repositories.UserRepository
 import com.example.agizap.model.Chat
 import com.example.agizap.model.Message
 import com.example.agizap.model.User
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -87,6 +89,26 @@ class HomeViewModel (
             now.year == time.year &&
                     time.dayOfYear in (today -2 .. today - 7) -> return time.dayOfWeek.toString()
             else -> return let{ String.format("%02d/%02d/%04d", time.dayOfMonth, time.monthValue, time.year) }
+        }
+    }
+
+    fun findUserById(id: String) = uiState.value.users.find { it.id == id } ?: User()
+
+    fun getCurrentUser(){
+        viewModelScope.launch {
+            _uiState.value = uiState.value.copy(
+                currentUser = findUserById(FirebaseAuth.getInstance().currentUser?.uid ?: "")
+            )
+        }
+    }
+
+    fun getCurrentUserChats(){
+        viewModelScope.launch {
+            _uiState.value = uiState.value.copy(
+                chats = chatRepo.getChats().filter{
+                    uiState.value.currentUser.id in it.users
+                }
+            )
         }
     }
 }
