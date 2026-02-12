@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Alert(
-    title: String,
-    desc: String,
-    confirmText: String,
-    cancelText: String,
-    confirmAction: () -> Unit,
-    cancelAction: () -> Unit
+    title: String = "",
+    desc: String = "",
+    confirmText: String = "",
+    cancelText: String = "",
+    confirmAction: () -> Unit = {},
+    cancelAction: () -> Unit = {}
 ) {
     AlertDialog(
         onDismissRequest = {  },

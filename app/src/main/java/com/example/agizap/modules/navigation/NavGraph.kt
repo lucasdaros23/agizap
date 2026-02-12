@@ -28,7 +28,7 @@ fun NavGraph(
             HomeScreen(homeViewModel, navController)
         }
         composable(Routes.LOGIN) {
-            LoginScreen(loginViewModel, authViewModel, navController)
+            LoginScreen(loginViewModel, navController)
         }
     }
 }
