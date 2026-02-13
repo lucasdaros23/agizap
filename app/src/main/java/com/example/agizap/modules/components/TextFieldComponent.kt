@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.sp
 fun TextFieldComponent(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     placeholder: String,
-    leadingIcon: @Composable (() -> Unit),
-    trailingIcon: @Composable (() -> Unit),
+    leadingIcon: @Composable (() -> Unit) = {},
+    trailingIcon: @Composable (() -> Unit) = {},
 ) {
     OutlinedTextField(
         value = value,

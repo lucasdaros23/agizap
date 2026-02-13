@@ -11,6 +11,8 @@ import androidx.navigation.compose.composable
 import com.example.agizap.modules.auth.AuthViewModel
 import com.example.agizap.modules.feature.login.LoginScreen
 import com.example.agizap.modules.feature.login.LoginViewModel
+import com.example.agizap.modules.feature.register.RegisterScreen
+import com.example.agizap.modules.feature.register.RegisterViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -18,7 +20,7 @@ fun NavGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     loginViewModel: LoginViewModel,
-    authViewModel: AuthViewModel,
+    registerViewModel: RegisterViewModel
 ){
     NavHost(
         navController = navController,
@@ -29,6 +31,9 @@ fun NavGraph(
         }
         composable(Routes.LOGIN) {
             LoginScreen(loginViewModel, navController)
+        }
+        composable(Routes.REGISTER){
+            RegisterScreen(registerViewModel, navController)
         }
     }
 }

@@ -2,7 +2,6 @@ package com.example.agizap.modules.feature.home
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -65,7 +64,7 @@ class HomeViewModel (
     }
 
     fun chatsSortedByDate() = uiState.value.chats.sortedBy { it.messages.last().time }
-    fun onShowAlertHome(){
+    fun onShowAlert(){
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
     }
 
@@ -108,6 +107,21 @@ class HomeViewModel (
                 chats = chatRepo.getChats().filter{
                     uiState.value.currentUser.id in it.users
                 }
+            )
+        }
+    }
+    fun addChatDialog(){
+        _uiState.value = uiState.value.copy(
+            showAddChat = !uiState.value.showAddChat
+        )
+    }
+
+    fun onShowAddChat() {
+        viewModelScope.launch {
+            val usersList = userRepo.getUsers()
+            _uiState.value = uiState.value.copy(
+                users = usersList,
+                showAddChat = !uiState.value.showAddChat
             )
         }
     }

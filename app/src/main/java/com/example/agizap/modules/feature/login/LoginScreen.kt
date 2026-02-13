@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.agizap.modules.components.Alert
-import com.example.agizap.modules.feature.login.components.LoginConfirmButton
+import com.example.agizap.modules.components.ConfirmButton
 import com.example.agizap.modules.feature.login.components.LoginTextButton
 import com.example.agizap.modules.feature.login.components.LoginTextField
 import com.example.agizap.modules.navigation.Routes
@@ -51,7 +51,7 @@ fun LoginScreen(
                 label = "Senha"
             )
             Spacer(modifier = Modifier.size(30.dp))
-            LoginConfirmButton(
+            ConfirmButton(
                 onClick = {
                     viewModel.login(uistate.email, uistate.password)
                           },
@@ -64,15 +64,14 @@ fun LoginScreen(
                 LoginTextButton(
                     text = "Criar Conta",
                     onClick = {
-                        viewModel.onChangeMessage("Essa função ainda não foi implementada")
-                        viewModel.onShowAlertLogin()
+                        navController.navigate(Routes.REGISTER)
                     }
                 )
                 LoginTextButton(
                     text = "Redefinir senha",
                     onClick = {
                         viewModel.onChangeMessage("Essa função ainda não foi implementada")
-                        viewModel.onShowAlertLogin()
+                        viewModel.onShowAlert()
                     }
 
                 )
@@ -91,11 +90,13 @@ fun LoginScreen(
         if (uistate.showAlert){
             Alert(
                 title = uistate.message,
-                confirmText = "Ok",
+                confirmText = "OK",
                 confirmAction = {
-                    viewModel.onShowAlertLogin()
+                    viewModel.onShowAlert()
                     if (uistate.success){
-                        navController.navigate(Routes.HOME)
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        }
                     }
                 }
             )

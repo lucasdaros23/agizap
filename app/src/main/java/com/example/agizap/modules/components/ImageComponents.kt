@@ -27,9 +27,9 @@ fun ImageComponent(id: Int) {
 }
 
 @Composable
-fun ImageFromUrl(url: String) {
+fun ImageFromUrl(url: String, modifier: Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {

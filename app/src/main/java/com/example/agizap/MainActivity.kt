@@ -20,6 +20,7 @@ import com.example.agizap.modules.navigation.NavGraph
 import com.example.agizap.ui.theme.AgizapTheme
 import com.example.agizap.modules.feature.home.HomeViewModel
 import com.example.agizap.modules.feature.login.LoginViewModel
+import com.example.agizap.modules.feature.register.RegisterViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -33,13 +34,13 @@ class MainActivity : ComponentActivity() {
                     val navController: NavHostController = rememberNavController()
                     val homeViewModel: HomeViewModel = viewModel()
                     val loginViewModel: LoginViewModel = viewModel()
-                    val authViewModel: AuthViewModel = viewModel()
+                    val registerViewModel: RegisterViewModel = viewModel()
 
                     NavGraph(
                         navController = navController,
                         homeViewModel = homeViewModel,
                         loginViewModel = loginViewModel,
-                        authViewModel = authViewModel
+                        registerViewModel = registerViewModel
                     )
                 }
             }

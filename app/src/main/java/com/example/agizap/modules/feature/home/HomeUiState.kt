@@ -8,5 +8,6 @@ data class HomeUiState(
     val users: List<User> = emptyList(),
     val chats: List<Chat> = emptyList(),
     val showAlert: Boolean = false,
-    val currentUser: User = User()
+    val currentUser: User = User(),
+    val showAddChat: Boolean = false
 )

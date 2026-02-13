@@ -1,4 +1,4 @@
-package com.example.agizap.modules.feature.login.components
+package com.example.agizap.modules.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginConfirmButton(onClick: ()-> Unit, text: String) {
+fun ConfirmButton(onClick: ()-> Unit, text: String) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(10.dp),
