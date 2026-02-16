@@ -3,8 +3,10 @@ package com.example.agizap.modules.feature.register
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ConfirmButton
 import com.example.agizap.modules.feature.login.components.LoginTextField
 import com.example.agizap.modules.feature.register.components.RegisterTextField
+import com.example.agizap.modules.feature.register.components.ReturnButton
 import com.example.agizap.modules.navigation.Routes
 
 @Composable
@@ -26,7 +29,14 @@ fun RegisterScreen(
     navController: NavHostController
 ) {
     val uistate = viewModel.uiState.collectAsStateWithLifecycle().value
-    Box(){
+    Box() {
+        Row(
+            Modifier.padding(10.dp),
+        ) {
+            ReturnButton(
+                onClick = { navController.popBackStack() }
+            )
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -55,24 +65,30 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.size(30.dp))
             ConfirmButton(
                 onClick = {
+                    viewModel.onButtonEnabled()
                     if (
                         uistate.email.trim() != "" &&
                         uistate.password.trim() != "" &&
                         uistate.username.trim() != ""
-                    ){
+                    ) {
                         viewModel.register(email = uistate.email, password = uistate.password)
+                    } else {
+                        viewModel.onChangeMessage("Preencha todos os campos corretamente")
+                        viewModel.onShowAlert()
                     }
                 },
-                text = "Criar conta"
+                text = "Criar conta",
+                enabled = uistate.buttonEnabled
             )
 
         }
-        if (uistate.showAlert){
+        if (uistate.showAlert) {
             Alert(
                 title = uistate.message,
                 confirmText = "OK",
                 confirmAction = {
                     viewModel.onShowAlert()
+                    viewModel.onButtonEnabled()
                     if (uistate.success) {
                         navController.navigate(Routes.HOME) {
                             popUpTo(Routes.REGISTER) { inclusive = true }

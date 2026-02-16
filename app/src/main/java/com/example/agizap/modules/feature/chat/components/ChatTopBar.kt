@@ -1,0 +1,66 @@
+package com.example.agizap.modules.feature.chat.components
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.agizap.R
+import com.example.agizap.model.Chat
+import com.example.agizap.model.User
+import com.example.agizap.modules.components.IconButtonComponent
+import com.example.agizap.modules.components.ImageFromUrl
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, user: User) {
+    TopAppBar(
+        navigationIcon = {
+            IconButtonComponent(
+                painter = painterResource(R.drawable.voltar),
+                onClick = {
+                    onClickBack()
+                },
+                size = 30
+            )
+        },
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                ImageFromUrl(user.photo, modifier = Modifier.size(50.dp).clip(CircleShape))
+                Spacer(modifier = Modifier.size(15.dp))
+                Text(user.name)
+            }
+        },
+        actions = {
+            IconButtonComponent(
+                painter = painterResource(R.drawable.ligar),
+                onClick = { onClickOther() },
+                size = 30
+            )
+            IconButtonComponent(
+                painter = painterResource(R.drawable.ligarvideo),
+                onClick = { onClickOther() },
+                size = 40
+            )
+            IconButtonComponent(
+                painter = painterResource(R.drawable.opcoes),
+                onClick = { onClickOther() },
+                size = 25
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.tertiary
+        ),
+    )
+}

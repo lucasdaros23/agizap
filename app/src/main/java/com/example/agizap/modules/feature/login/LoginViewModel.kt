@@ -2,7 +2,10 @@ package com.example.agizap.modules.feature.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -30,7 +33,13 @@ class LoginViewModel: ViewModel() {
                 }
                 .addOnFailureListener {
                     _authState.value = AuthState.Erro(it.message ?: "Erro desconhecido")
-                    onChangeMessage("Erro ao realizar login")
+                    onChangeMessage(when (it){
+                        is FirebaseAuthInvalidCredentialsException -> "Email e/ou senha incorretos"
+                        is FirebaseAuthInvalidUserException -> "Usuário não encontrado"
+                        is FirebaseNetworkException -> "Falha na conexão. Verifique sua internet"
+                        else -> "Erro ao realizar login"
+                    }
+                    )
                     onShowAlert()
                 }
         }
@@ -60,5 +69,9 @@ class LoginViewModel: ViewModel() {
 
     fun onShowAlert(){
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
+    }
+
+    fun onButtonEnabled(){
+        _uiState.value = uiState.value.copy(buttonEnabled = !uiState.value.buttonEnabled)
     }
 }

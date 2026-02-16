@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ConfirmButton(onClick: ()-> Unit, text: String) {
+fun ConfirmButton(onClick: ()-> Unit, text: String, enabled: Boolean) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(10.dp),
@@ -21,7 +21,8 @@ fun ConfirmButton(onClick: ()-> Unit, text: String) {
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = Color.White
         ),
-        modifier = Modifier.fillMaxWidth(.7f)
+        modifier = Modifier.fillMaxWidth(.7f),
+        enabled = enabled
 
     ) {
         Text(

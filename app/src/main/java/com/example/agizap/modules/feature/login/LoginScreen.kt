@@ -53,9 +53,16 @@ fun LoginScreen(
             Spacer(modifier = Modifier.size(30.dp))
             ConfirmButton(
                 onClick = {
-                    viewModel.login(uistate.email, uistate.password)
-                          },
-                text = "Entrar"
+                    viewModel.onButtonEnabled()
+                    if (uistate.email != "" && uistate.password != "") {
+                        viewModel.login(uistate.email, uistate.password)
+                    }else{
+                        viewModel.onChangeMessage("Preencha todos os campos corretamente")
+                        viewModel.onShowAlert()
+                    }
+                },
+                text = "Entrar",
+                enabled = uistate.buttonEnabled
             )
             Row(
                 modifier = Modifier.fillMaxWidth(.75f),
@@ -93,6 +100,7 @@ fun LoginScreen(
                 confirmText = "OK",
                 confirmAction = {
                     viewModel.onShowAlert()
+                    viewModel.onButtonEnabled()
                     if (uistate.success){
                         navController.navigate(Routes.HOME) {
                             popUpTo(Routes.LOGIN) { inclusive = true }

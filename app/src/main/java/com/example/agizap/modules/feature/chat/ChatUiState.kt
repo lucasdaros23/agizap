@@ -1,0 +1,12 @@
+package com.example.agizap.modules.feature.chat
+
+import com.example.agizap.model.Chat
+import com.example.agizap.model.Message
+import com.example.agizap.model.User
+
+data class ChatUiState(
+    val users: List<User> = emptyList(),
+    val chat: Chat = Chat(),
+    val messages: List<Message> = emptyList(),
+    val showAlert: Boolean = false
+)

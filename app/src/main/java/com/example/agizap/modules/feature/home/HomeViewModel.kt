@@ -70,8 +70,10 @@ class HomeViewModel (
 
     fun checkSent(user: User, message: Message) = (user.id == message.userId)
 
-    fun getChatName(chat: Chat) = if (chat.users.size == 2) "" else chat.name // MUDAR AQUI PRA QUANDO POR O AUTH E BOTAR O FIND WHERE DIFERENTE DE GETCURRENTUSER
-    
+    fun getChatName(chat: Chat) = if (chat.users.size == 2){
+        chat.users.find { it == uiState.value.currentUser.id } ?: ""
+    } else chat.name
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertTime(time: Long) = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
 
@@ -124,5 +126,11 @@ class HomeViewModel (
                 showAddChat = !uiState.value.showAddChat
             )
         }
+    }
+
+    fun addChat(users: List<String>){
+        chatRepo.addChat(Chat(
+            users = users
+        ))
     }
 }

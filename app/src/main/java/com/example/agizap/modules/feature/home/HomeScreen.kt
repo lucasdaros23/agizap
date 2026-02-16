@@ -73,16 +73,19 @@ fun HomeScreen(
                 Box() {
                     LazyColumn() {
                         items(viewModel.chatsSortedByDate()) {
-                            ChatCard(
-                                chat = it,
-                                onclick = { navController.navigate(Routes.CHAT) },
-                                time = viewModel.formatTime(viewModel.convertTime(it.messages.last().time)),
-                                chatName = viewModel.getChatName(it),
-                                checkSent = viewModel.checkSent(
-                                    User(),
-                                    it.messages.last()
-                                ) // CHAMAR O GET CURRENT USER DO AUTH TBM
-                            )
+                            viewModel.getCurrentUser()
+                            if (uiState.currentUser.id in it.users){
+                                ChatCard(
+                                    chat = it,
+                                    onclick = { navController.navigate(Routes.CHAT) },
+                                    time = viewModel.formatTime(viewModel.convertTime(it.messages.last().time)),
+                                    chatName = viewModel.getChatName(it),
+                                    checkSent = viewModel.checkSent(
+                                        User(),
+                                        it.messages.last()
+                                    ) // CHAMAR O GET CURRENT USER DO AUTH TBM
+                                )
+                            }
                         }
                     }
                 }
