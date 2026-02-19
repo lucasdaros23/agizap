@@ -78,11 +78,12 @@ fun HomeScreen(
                                     chat = it,
                                     onclick = { navController.navigate("chat/${it.id}") },
                                     time = viewModel.formatTime(viewModel.convertTime(it.messages.lastOrNull()?.time ?: System.currentTimeMillis())),
-                                    chatName = viewModel.getChatName(it),
+                                    chatName = viewModel.getChatName(it, uiState.currentUser),
                                     checkSent = viewModel.checkSent(
                                         uiState.currentUser,
                                         it.messages.lastOrNull() ?: Message()
-                                    )
+                                    ),
+                                    photo = viewModel.getChatPhoto(it, uiState.currentUser)
                                 )
                             }
                         }
@@ -114,10 +115,12 @@ fun HomeScreen(
                     uiState.users,
                     onClick = { viewModel.onShowAddChat() },
                     onItemClick = {
-                        val chatId = viewModel.addChat(listOf(uiState.currentUser.id, it.id))
-                        navController.navigate("chat/${chatId}")
+                        if (!viewModel.checkChatExists(listOf(uiState.currentUser, it))){
+                            val chatId = viewModel.addChat(listOf(uiState.currentUser.id, it.id))
+                            navController.navigate("chat/${chatId}")
+                        }
                         viewModel.onShowAddChat()
-                })
+                    })
             }
         }
     }

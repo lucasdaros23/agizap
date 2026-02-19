@@ -61,11 +61,6 @@ class HomeViewModel (
         }
     }
 
-    fun userAdd(user: User) {
-        userRepo.addUser(user)
-        updateUsers()
-    }
-
     fun onTextFieldChange(value: String){
         _uiState.value = uiState.value.copy(
             textField = value
@@ -79,10 +74,13 @@ class HomeViewModel (
 
     fun checkSent(user: User, message: Message) = (user.id == message.userId)
 
-    fun getChatName(chat: Chat) = if (chat.users.size == 2){
-        chat.users.find { it == uiState.value.currentUser.id } ?: ""
-    } else chat.name
 
+    fun getChatName(chat: Chat, currentUser: User): String{
+        return if (chat.users.size > 2) chat.name
+        else {
+            uiState.value.users.find { it.id in chat.users && it.id != currentUser.id }?.name ?: User().name
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertTime(time: Long) = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
 
@@ -141,6 +139,18 @@ class HomeViewModel (
         val chat = Chat(users = users)
         val chatId = chatRepo.addChat(chat)
         return chatId
+    }
+
+    fun checkChatExists(users: List<User>): Boolean{
+        val chat = uiState.value.chats.find { it.users.toSet() == users.toSet() }
+        return (chat != null)
+    }
+
+    fun getChatPhoto(chat: Chat, currentUser: User): String{
+        return if (chat.users.size > 2) chat.photo
+        else {
+            uiState.value.users.find { it.id in chat.users && it.id != currentUser.id }?.photo ?: User().photo
+        }
     }
 
 }
