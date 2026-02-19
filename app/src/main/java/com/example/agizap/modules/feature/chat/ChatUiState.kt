@@ -8,5 +8,7 @@ data class ChatUiState(
     val users: List<User> = emptyList(),
     val chat: Chat = Chat(),
     val messages: List<Message> = emptyList(),
-    val showAlert: Boolean = false
+    val showAlert: Boolean = false,
+    val textField: String = "",
+    val currentUser: User = User(),
 )

@@ -4,11 +4,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import com.example.agizap.modules.feature.home.HomeViewModel
 import com.example.agizap.modules.feature.home.HomeScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.agizap.modules.auth.AuthViewModel
+import androidx.navigation.navArgument
+import com.example.agizap.modules.feature.chat.ChatScreen
+import com.example.agizap.modules.feature.chat.ChatViewModel
 import com.example.agizap.modules.feature.login.LoginScreen
 import com.example.agizap.modules.feature.login.LoginViewModel
 import com.example.agizap.modules.feature.register.RegisterScreen
@@ -20,7 +23,8 @@ fun NavGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     loginViewModel: LoginViewModel,
-    registerViewModel: RegisterViewModel
+    registerViewModel: RegisterViewModel,
+    chatViewModel: ChatViewModel
 ){
     NavHost(
         navController = navController,
@@ -34,6 +38,20 @@ fun NavGraph(
         }
         composable(Routes.REGISTER){
             RegisterScreen(registerViewModel, navController)
+        }
+        composable(
+            route = Routes.CHAT,
+            arguments = listOf(
+                navArgument("chatId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            ChatScreen(
+                viewModel = chatViewModel,
+                chatId = chatId,
+                navController = navController
+
+            )
         }
     }
 }

@@ -8,7 +8,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.agizap.R
 
 @Composable
-fun VisualizadoIcon(modifier: Modifier = Modifier) {
+fun SeenIcon(modifier: Modifier = Modifier) {
     Icon(
         painterResource(R.drawable.seen),
         "",

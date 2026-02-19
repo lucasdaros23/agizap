@@ -3,7 +3,6 @@ package com.example.agizap.modules.feature.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agizap.model.User
-import com.example.agizap.modules.feature.login.AuthState
 import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
@@ -23,9 +22,6 @@ class RegisterViewModel(
     val uiState = _uiState.asStateFlow()
 
     private val auth = FirebaseAuth.getInstance()
-
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Deslogado)
-    val authState = _authState.asStateFlow()
 
     fun onEmailChange(value: String){
         _uiState.value = uiState.value.copy(
@@ -67,7 +63,6 @@ class RegisterViewModel(
                         message = "Cadastro realizado com sucesso",
                         success = true
                     )
-                    _authState.value = AuthState.Logado(it.user?.uid)
                     userRepo.addUser(
                         User(
                             email = email,
@@ -78,7 +73,6 @@ class RegisterViewModel(
                     onShowAlert()
                 }
                 .addOnFailureListener {
-                    _authState.value = AuthState.Erro(it.message ?: "Erro desconhecido")
                     onChangeMessage(when(it) {
                         is FirebaseAuthWeakPasswordException -> "A senha deve ter pelo menos 6 caracteres"
                         is FirebaseAuthUserCollisionException -> "Este email já está sendo usado."

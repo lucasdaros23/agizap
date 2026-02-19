@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.example.agizap.R
 import com.example.agizap.model.Chat
 import com.example.agizap.modules.components.ImageComponent
-import com.example.agizap.modules.components.VisualizadoIcon
+import com.example.agizap.modules.components.SeenIcon
 
 @Composable
 fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, checkSent: Boolean) {
@@ -43,7 +43,7 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
             }
             Row(){
                 if (checkSent){
-                    VisualizadoIcon(modifier = Modifier.size(24.dp))
+                    SeenIcon(modifier = Modifier.size(24.dp))
                 }
                 Text(text = lastMessage?.text ?: "", color = MaterialTheme.colorScheme.onTertiary)
             }

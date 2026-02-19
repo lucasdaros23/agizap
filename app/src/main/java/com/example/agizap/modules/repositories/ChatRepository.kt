@@ -13,15 +13,18 @@ class ChatRepository {
 
     constructor()
 
-    fun addChat(chat: Chat) {
-        db.collection(path)
-            .add(chat)
-            .addOnSuccessListener { docRef ->
-                Log.d("Firestore", "Adicionado a $path com ID: ${docRef.id}")
+    fun addChat(chat: Chat): String {
+        val ref = db.collection(path).document()
+        val chatId = ref.id
+        val chatWithId = chat.copy(id = chatId)
+        ref.set(chatWithId)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Adicionado com ID: $chatId")
             }
             .addOnFailureListener { e ->
                 Log.w("Firestore", "Falha ao adicionar documento", e)
             }
+        return chatId
     }
 
     suspend fun getChats(): List<Chat> {
@@ -40,8 +43,9 @@ class ChatRepository {
                 Chat(
                     name = chatDoc.getString("name") ?: "",
                     messages = messages.sortedBy { it.time },
-                    users = chatDoc.get("users") as List<String> ?: emptyList(),
+                    users = chatDoc.get("users") as List<String>,
                     id = chatDoc.id,
+                    photo = chatDoc.getString("photo") ?: ""
                 )
             }
         } catch (e: Exception) {

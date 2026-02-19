@@ -5,4 +5,5 @@ data class Chat(
     val messages: List<Message> = emptyList(),
     val users: List<String> = emptyList(),
     val id: String = "",
+    val photo: String = ""
 )

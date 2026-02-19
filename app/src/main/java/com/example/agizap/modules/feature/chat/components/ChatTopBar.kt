@@ -23,7 +23,7 @@ import com.example.agizap.modules.components.ImageFromUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, user: User) {
+fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, user: User, isGroup: Boolean) {
     TopAppBar(
         navigationIcon = {
             IconButtonComponent(
@@ -36,9 +36,11 @@ fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, us
         },
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ImageFromUrl(user.photo, modifier = Modifier.size(50.dp).clip(CircleShape))
+                ImageFromUrl(
+                    if (!isGroup) user.photo else chat.photo,
+                    modifier = Modifier.size(50.dp).clip(CircleShape))
                 Spacer(modifier = Modifier.size(15.dp))
-                Text(user.name)
+                Text(if (!isGroup) user.name else chat.name)
             }
         },
         actions = {

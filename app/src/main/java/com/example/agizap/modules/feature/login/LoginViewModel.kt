@@ -17,9 +17,6 @@ class LoginViewModel: ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
 
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Deslogado)
-    val authState = _authState.asStateFlow()
-
     fun login(email: String, password: String) {
         viewModelScope.launch {
             auth.signInWithEmailAndPassword(email, password)
@@ -28,11 +25,9 @@ class LoginViewModel: ViewModel() {
                         message = "Login realizado com sucesso",
                         success = true
                     )
-                    _authState.value = AuthState.Logado(it.user?.uid)
                     onShowAlert()
                 }
                 .addOnFailureListener {
-                    _authState.value = AuthState.Erro(it.message ?: "Erro desconhecido")
                     onChangeMessage(when (it){
                         is FirebaseAuthInvalidCredentialsException -> "Email e/ou senha incorretos"
                         is FirebaseAuthInvalidUserException -> "Usuário não encontrado"
@@ -47,7 +42,6 @@ class LoginViewModel: ViewModel() {
 
     fun logout() {
         auth.signOut()
-        _authState.value = AuthState.Deslogado
     }
     fun onEmailChange(value: String){
         _uiState.value = uiState.value.copy(

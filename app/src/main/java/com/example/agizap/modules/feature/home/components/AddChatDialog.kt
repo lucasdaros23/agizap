@@ -22,7 +22,7 @@ import com.example.agizap.modules.components.AlertTextButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddChatDialog(users: List<User>, onClick: () -> Unit, onItemClick: () -> Unit) {
+fun AddChatDialog(users: List<User>, onClick: () -> Unit, onItemClick: (User) -> Unit) {
     AlertDialog(
         onDismissRequest = { },
     ) {
@@ -41,7 +41,7 @@ fun AddChatDialog(users: List<User>, onClick: () -> Unit, onItemClick: () -> Uni
 
                     LazyColumn(modifier = Modifier.fillMaxWidth()) {
                         items(users) {
-                            UserCardSearch(it, onClick = { onItemClick()})
+                            UserCardSearch(it, onClick = { onItemClick(it)})
                             Spacer(Modifier.size(5.dp))
                         }
                     }

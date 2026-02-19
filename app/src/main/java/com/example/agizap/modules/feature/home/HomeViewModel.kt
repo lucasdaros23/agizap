@@ -43,18 +43,27 @@ class HomeViewModel (
     }
 
     fun onLaunch(){
-        updateUsers()
-        updateChats()
+        // Load users first, set current user, then load chats filtered for this user
+        viewModelScope.launch {
+            val usersList = userRepo.getUsers()
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = usersList.find { it.id == currentUid } ?: User()
+
+            val chatsList = chatRepo.getChats().filter { chat ->
+                currentUser.id in chat.users
+            }
+
+            _uiState.value = uiState.value.copy(
+                users = usersList,
+                currentUser = currentUser,
+                chats = chatsList
+            )
+        }
     }
 
     fun userAdd(user: User) {
         userRepo.addUser(user)
         updateUsers()
-    }
-
-    fun chatAdd(chat: Chat){
-        chatRepo.addChat(chat)
-        updateChats()
     }
 
     fun onTextFieldChange(value: String){
@@ -63,7 +72,7 @@ class HomeViewModel (
         )
     }
 
-    fun chatsSortedByDate() = uiState.value.chats.sortedBy { it.messages.last().time }
+    fun chatsSortedByDate() = uiState.value.chats.sortedBy { it.messages.lastOrNull()?.time ?: System.currentTimeMillis() }
     fun onShowAlert(){
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
     }
@@ -128,9 +137,10 @@ class HomeViewModel (
         }
     }
 
-    fun addChat(users: List<String>){
-        chatRepo.addChat(Chat(
-            users = users
-        ))
+    fun addChat(users: List<String>): String{
+        val chat = Chat(users = users)
+        val chatId = chatRepo.addChat(chat)
+        return chatId
     }
+
 }

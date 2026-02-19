@@ -7,15 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.agizap.modules.auth.AuthViewModel
+import com.example.agizap.modules.feature.chat.ChatViewModel
 import com.example.agizap.modules.navigation.NavGraph
 import com.example.agizap.ui.theme.AgizapTheme
 import com.example.agizap.modules.feature.home.HomeViewModel
@@ -35,12 +32,14 @@ class MainActivity : ComponentActivity() {
                     val homeViewModel: HomeViewModel = viewModel()
                     val loginViewModel: LoginViewModel = viewModel()
                     val registerViewModel: RegisterViewModel = viewModel()
+                    val chatViewModel: ChatViewModel = viewModel()
 
                     NavGraph(
                         navController = navController,
                         homeViewModel = homeViewModel,
                         loginViewModel = loginViewModel,
-                        registerViewModel = registerViewModel
+                        registerViewModel = registerViewModel,
+                        chatViewModel = chatViewModel
                     )
                 }
             }

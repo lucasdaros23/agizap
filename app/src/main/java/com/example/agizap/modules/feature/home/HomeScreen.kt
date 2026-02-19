@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.agizap.R
+import com.example.agizap.model.Message
 import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.IconButtonComponent
@@ -32,7 +33,6 @@ import com.example.agizap.modules.feature.home.components.AddChatButton
 import com.example.agizap.modules.feature.home.components.AddChatDialog
 import com.example.agizap.modules.feature.home.components.TopBarHome
 import com.example.agizap.modules.feature.home.components.ChatCard
-import com.example.agizap.modules.navigation.Routes
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,17 +73,16 @@ fun HomeScreen(
                 Box() {
                     LazyColumn() {
                         items(viewModel.chatsSortedByDate()) {
-                            viewModel.getCurrentUser()
                             if (uiState.currentUser.id in it.users){
                                 ChatCard(
                                     chat = it,
-                                    onclick = { navController.navigate(Routes.CHAT) },
-                                    time = viewModel.formatTime(viewModel.convertTime(it.messages.last().time)),
+                                    onclick = { navController.navigate("chat/${it.id}") },
+                                    time = viewModel.formatTime(viewModel.convertTime(it.messages.lastOrNull()?.time ?: System.currentTimeMillis())),
                                     chatName = viewModel.getChatName(it),
                                     checkSent = viewModel.checkSent(
-                                        User(),
-                                        it.messages.last()
-                                    ) // CHAMAR O GET CURRENT USER DO AUTH TBM
+                                        uiState.currentUser,
+                                        it.messages.lastOrNull() ?: Message()
+                                    )
                                 )
                             }
                         }
@@ -111,7 +110,14 @@ fun HomeScreen(
                 )
             }
             if (uiState.showAddChat) {
-                AddChatDialog(uiState.users, onClick = { viewModel.onShowAddChat() }, onItemClick = {})
+                AddChatDialog(
+                    uiState.users,
+                    onClick = { viewModel.onShowAddChat() },
+                    onItemClick = {
+                        val chatId = viewModel.addChat(listOf(uiState.currentUser.id, it.id))
+                        navController.navigate("chat/${chatId}")
+                        viewModel.onShowAddChat()
+                })
             }
         }
     }
