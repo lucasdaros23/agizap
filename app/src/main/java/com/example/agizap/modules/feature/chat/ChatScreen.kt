@@ -18,11 +18,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.agizap.model.Message
 import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
@@ -40,14 +37,16 @@ fun ChatScreen(
     navController: NavHostController
 ) {
     LaunchedEffect(chatId) {
-        viewModel.onLaunch(chatId)
+        viewModel.onUpdate(chatId)
     }
     val uiState by viewModel.uiState.collectAsState()
-    Box(){
+    Box() {
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                val otherUser = uiState.users.find { it.id in uiState.chat.users && it.id != uiState.currentUser.id } ?: User()
+                val otherUser =
+                    uiState.users.find { it.id in uiState.chat.users && it.id != uiState.currentUser.id }
+                        ?: User()
 
                 ChatTopBar(
                     onClickBack = {
@@ -56,7 +55,7 @@ fun ChatScreen(
                     onClickOther = { viewModel.onShowAlert() },
                     user = otherUser,
                     chat = uiState.chat,
-                    isGroup = (uiState.users.size>2)
+                    isGroup = (uiState.users.size > 2)
                 )
             },
             bottomBar = {
@@ -64,14 +63,17 @@ fun ChatScreen(
                     value = uiState.textField,
                     onValueChange = { viewModel.onTextFieldChange(it) },
                     onShowAlertClick = { viewModel.onShowAlert() },
-                    sendMessage = {viewModel.sendMessage(
-                        Message(
-                            text = uiState.textField,
-                            userId = uiState.currentUser.id,
-                            time = System.currentTimeMillis(),
-                        ),
-                        chatId = uiState.chat.id
-                    )
+                    sendMessage = {
+                        viewModel.sendMessage(
+                            Message(
+                                text = uiState.textField,
+                                userId = uiState.currentUser.id,
+                                time = System.currentTimeMillis(),
+                            ),
+                            chatId = uiState.chat.id
+                        )
+                        viewModel.onTextFieldChange("")
+
                     }
 
                 )
@@ -83,7 +85,7 @@ fun ChatScreen(
             val messages = uiState.messages
 
             LaunchedEffect(messages.size) {
-                if (messages.isNotEmpty()){
+                if (messages.isNotEmpty()) {
                     listState.scrollToItem(messages.lastIndex)
                 }
             }
@@ -95,14 +97,19 @@ fun ChatScreen(
                     .padding(horizontal = 20.dp),
                 state = listState
             ) {
-                items(messages){
-                    if (viewModel.checkDateComponent(it)){
-                        DateComponent(
-                            text = viewModel.formatTime(
-                                time = viewModel.convertTime(it.time),
-                                card = false
+                items(messages) {
+                    if (viewModel.checkDateComponent(it)) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            DateComponent(
+                                text = viewModel.formatTime(
+                                    time = viewModel.convertTime(it.time),
+                                    card = false
+                                )
                             )
-                        )
+                        }
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -113,10 +120,12 @@ fun ChatScreen(
                             message = it,
                             formatedTime = viewModel.formatTime(
                                 time = viewModel.convertTime(it.time),
-                                card = true),
+                                card = true
+                            ),
                             sent = viewModel.checkSent(
                                 user = uiState.currentUser,
-                                message = it)
+                                message = it
+                            )
                         )
                     }
 
@@ -133,15 +142,4 @@ fun ChatScreen(
             )
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-private fun ChatScreenPrev() {
-    ChatScreen(
-        viewModel(),
-        "",
-        rememberNavController()
-    )
 }

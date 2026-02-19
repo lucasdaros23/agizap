@@ -3,6 +3,7 @@ package com.example.agizap.modules.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import com.example.agizap.modules.feature.home.HomeViewModel
@@ -21,22 +22,21 @@ import com.example.agizap.modules.feature.register.RegisterViewModel
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
-    loginViewModel: LoginViewModel,
-    registerViewModel: RegisterViewModel,
-    chatViewModel: ChatViewModel
 ){
     NavHost(
         navController = navController,
         startDestination = Routes.LOGIN
     ){
         composable(Routes.HOME){
+            val homeViewModel: HomeViewModel = hiltViewModel()
             HomeScreen(homeViewModel, navController)
         }
         composable(Routes.LOGIN) {
+            val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(loginViewModel, navController)
         }
         composable(Routes.REGISTER){
+            val registerViewModel: RegisterViewModel = hiltViewModel()
             RegisterScreen(registerViewModel, navController)
         }
         composable(
@@ -46,6 +46,7 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val chatViewModel: ChatViewModel = hiltViewModel()
             ChatScreen(
                 viewModel = chatViewModel,
                 chatId = chatId,

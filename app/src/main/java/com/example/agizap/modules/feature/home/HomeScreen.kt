@@ -12,20 +12,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.agizap.R
 import com.example.agizap.model.Message
-import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.IconButtonComponent
 import com.example.agizap.modules.components.TextFieldComponent
@@ -38,13 +34,10 @@ import com.example.agizap.modules.feature.home.components.ChatCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
+    viewModel: HomeViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.onLaunch()
-    }
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             TopBarHome(
@@ -72,6 +65,7 @@ fun HomeScreen(
                 )
                 Box() {
                     LazyColumn() {
+                        viewModel.onUpdate()
                         items(viewModel.chatsSortedByDate()) {
                             if (uiState.currentUser.id in it.users){
                                 ChatCard(
@@ -120,18 +114,9 @@ fun HomeScreen(
                             navController.navigate("chat/${chatId}")
                         }
                         viewModel.onShowAddChat()
-                    })
+                    }
+                )
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-private fun HomeScreenPreview() {
-    HomeScreen(
-        viewModel = viewModel(),
-        navController = rememberNavController()
-    )
 }

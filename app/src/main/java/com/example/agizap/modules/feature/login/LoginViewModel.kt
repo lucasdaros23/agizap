@@ -1,43 +1,53 @@
 package com.example.agizap.modules.feature.login
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agizap.modules.preferences.PreferencesManager
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel: ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(): ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
     private val auth = FirebaseAuth.getInstance()
 
-    fun login(email: String, password: String) {
-        viewModelScope.launch {
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    _uiState.value = uiState.value.copy(
-                        message = "Login realizado com sucesso",
-                        success = true
-                    )
-                    onShowAlert()
+    fun login(context: Context, email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { result ->
+                _uiState.value = uiState.value.copy(
+                    message = "Login realizado com sucesso",
+                    success = true
+                )
+                onShowAlert()
+
+                val user = result.user
+                if (user != null) {
+                    val prefs = PreferencesManager(context)
+                    prefs.saveUserData(user.uid, user.email ?: "")
                 }
-                .addOnFailureListener {
-                    onChangeMessage(when (it){
-                        is FirebaseAuthInvalidCredentialsException -> "Email e/ou senha incorretos"
-                        is FirebaseAuthInvalidUserException -> "Usuário não encontrado"
-                        is FirebaseNetworkException -> "Falha na conexão. Verifique sua internet"
-                        else -> "Erro ao realizar login"
-                    }
-                    )
-                    onShowAlert()
+            }
+            .addOnFailureListener { e ->
+                val msg = when (e) {
+                    is FirebaseAuthInvalidCredentialsException -> "Email e/ou senha incorretos"
+                    is FirebaseAuthInvalidUserException -> "Usuário não encontrado"
+                    is FirebaseNetworkException -> "Falha na conexão. Verifique sua internet"
+                    else -> "Erro ao realizar login"
                 }
-        }
+                onChangeMessage(msg)
+                onShowAlert()
+            }
     }
 
     fun logout() {

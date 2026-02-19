@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ fun LoginScreen(
     navController: NavHostController
 ) {
     val uistate = viewModel.uiState.collectAsStateWithLifecycle().value
+    val context = LocalContext.current
     Box() {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -55,7 +57,7 @@ fun LoginScreen(
                 onClick = {
                     viewModel.onButtonEnabled()
                     if (uistate.email != "" && uistate.password != "") {
-                        viewModel.login(uistate.email, uistate.password)
+                        viewModel.login(context, uistate.email, uistate.password)
                     }else{
                         viewModel.onChangeMessage("Preencha todos os campos corretamente")
                         viewModel.onShowAlert()

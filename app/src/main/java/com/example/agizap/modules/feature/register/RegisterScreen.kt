@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ fun RegisterScreen(
     navController: NavHostController
 ) {
     val uistate = viewModel.uiState.collectAsStateWithLifecycle().value
+    val context = LocalContext.current
     Box() {
         Row(
             Modifier.padding(10.dp),
@@ -71,7 +73,7 @@ fun RegisterScreen(
                         uistate.password.trim() != "" &&
                         uistate.username.trim() != ""
                     ) {
-                        viewModel.register(email = uistate.email, password = uistate.password)
+                        viewModel.register(context, email = uistate.email, password = uistate.password)
                     } else {
                         viewModel.onChangeMessage("Preencha todos os campos corretamente")
                         viewModel.onShowAlert()

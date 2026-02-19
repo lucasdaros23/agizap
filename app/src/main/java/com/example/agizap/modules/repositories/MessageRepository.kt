@@ -11,14 +11,21 @@ import kotlinx.coroutines.tasks.await
 class MessageRepository {
     private val db = Firebase.firestore
 
-    fun addMessage(message: Message, chatId: String) {
-        db.collection("chats/${chatId}/messages")
+    fun addMessage(chatId: String, message: Message) {
+        if (chatId.isBlank()) {
+            Log.e("Firestore", "Erro: chatId está vazio — não é possível salvar a mensagem")
+            return
+        }
+
+        db.collection("chats")
+            .document(chatId)
+            .collection("messages")
             .add(message)
             .addOnSuccessListener { docRef ->
-                Log.d("Firestore", "Adicionado a messages com ID: ${docRef.id}")
+                Log.d("Firestore", "Mensagem adicionada ao chat $chatId com ID: ${docRef.id}")
             }
             .addOnFailureListener { e ->
-                Log.w("Firestore", "Falha ao adicionar documento", e)
+                Log.w("Firestore", "Falha ao adicionar mensagem", e)
             }
     }
 

@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -63,6 +65,14 @@ dependencies {
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+    //coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    //hilt
+    implementation("com.google.dagger:hilt-android:2.59")
+    ksp("com.google.dagger:hilt-compiler:2.59")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    //gosn
+    implementation("com.google.code.gson:gson:2.10.1")
 }

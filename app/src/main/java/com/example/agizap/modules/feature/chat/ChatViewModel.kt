@@ -1,6 +1,7 @@
 package com.example.agizap.modules.feature.chat
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
@@ -8,31 +9,51 @@ import androidx.lifecycle.viewModelScope
 import com.example.agizap.model.Chat
 import com.example.agizap.model.Message
 import com.example.agizap.model.User
+import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.modules.repositories.ChatRepository
 import com.example.agizap.modules.repositories.MessageRepository
+import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import javax.inject.Inject
 
-class ChatViewModel(
-    private val messageRepo : MessageRepository = MessageRepository(),
-    private val chatRepo : ChatRepository = ChatRepository(),
+@HiltViewModel
+class ChatViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val messageRepo: MessageRepository,
+    private val chatRepo: ChatRepository,
+    private val userRepo: UserRepository,
 ) : ViewModel(){
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onLaunch(chatId: String){
-        setChat(chatId)
-        getChatMessages(chatId)
+    private val auth = FirebaseAuth.getInstance()
+    private var authListener: FirebaseAuth.AuthStateListener? = null
+
+    fun onUpdate(chatId: String){
+        viewModelScope.launch {
+            val chatsList = chatRepo.getChats()
+            val usersList = userRepo.getUsers()
+            val currentUser = PreferencesManager(context).getUser() ?: User()
+            val currentChat = chatsList.find { it.id == chatId } ?: Chat()
+            val messages = currentChat.messages
+
+            _uiState.value = uiState.value.copy(
+                users = usersList,
+                chat = currentChat,
+                messages = messages,
+                currentUser = currentUser
+            )
+        }
     }
 
-    fun updateChatMessages(){
-
-    }
 
     suspend fun getChatById(id: String) = chatRepo.getChats().find { it.id == id } ?: Chat()
 
@@ -53,7 +74,7 @@ class ChatViewModel(
     }
 
     fun sendMessage(message: Message, chatId: String){
-        messageRepo.addMessage(message, chatId)
+        messageRepo.addMessage(chatId, message)
     }
 
     fun onTextFieldChange(value: String){
@@ -92,14 +113,6 @@ class ChatViewModel(
     }
     fun findUserById(id: String) = uiState.value.users.find { it.id == id } ?: User()
 
-    fun getCurrentUser(){
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                currentUser = findUserById(FirebaseAuth.getInstance().currentUser?.uid ?: "")
-            )
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkDateComponent(message: Message): Boolean{
         val list = uiState.value.messages
@@ -110,5 +123,10 @@ class ChatViewModel(
         return !(time.dayOfYear == time2.dayOfYear && time.year == time2.year)
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        authListener?.let { auth.removeAuthStateListener(it) }
+        authListener = null
+    }
 
 }

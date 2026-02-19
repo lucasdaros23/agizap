@@ -10,79 +10,73 @@ import com.example.agizap.modules.repositories.UserRepository
 import com.example.agizap.model.Chat
 import com.example.agizap.model.Message
 import com.example.agizap.model.User
+import com.example.agizap.modules.preferences.PreferencesManager
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.Instant
+import javax.inject.Inject
 
-class HomeViewModel (
-    private val userRepo: UserRepository = UserRepository(),
-    private val chatRepo: ChatRepository = ChatRepository(),
-
-    ): ViewModel(){
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val userRepo: UserRepository,
+    private val chatRepo: ChatRepository,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun updateUsers(){
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                users = userRepo.getUsers(),
-            )
-        }
+    init{
+        onUpdate()
     }
 
-    fun updateChats(){
+    fun onUpdate() {
         viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                chats = chatRepo.getChats(),
-            )
-        }
-    }
-
-    fun onLaunch(){
-        // Load users first, set current user, then load chats filtered for this user
-        viewModelScope.launch {
+            val chatsList = chatRepo.getChats()
             val usersList = userRepo.getUsers()
-            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-            val currentUser = usersList.find { it.id == currentUid } ?: User()
-
-            val chatsList = chatRepo.getChats().filter { chat ->
-                currentUser.id in chat.users
-            }
+            val currentUser = PreferencesManager(context).getUser() ?: User()
+            val currentUserChats = chatsList.filter { currentUser.id in it.users }
 
             _uiState.value = uiState.value.copy(
                 users = usersList,
                 currentUser = currentUser,
-                chats = chatsList
+                chats = currentUserChats
             )
         }
     }
 
-    fun onTextFieldChange(value: String){
+    fun onTextFieldChange(value: String) {
         _uiState.value = uiState.value.copy(
             textField = value
         )
     }
 
-    fun chatsSortedByDate() = uiState.value.chats.sortedBy { it.messages.lastOrNull()?.time ?: System.currentTimeMillis() }
-    fun onShowAlert(){
+    fun chatsSortedByDate() =
+        uiState.value.chats.sortedBy { it.messages.lastOrNull()?.time ?: 0L }
+
+    fun onShowAlert() {
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
     }
 
     fun checkSent(user: User, message: Message) = (user.id == message.userId)
 
-
-    fun getChatName(chat: Chat, currentUser: User): String{
+    fun getChatName(chat: Chat, currentUser: User): String {
         return if (chat.users.size > 2) chat.name
         else {
-            uiState.value.users.find { it.id in chat.users && it.id != currentUser.id }?.name ?: User().name
+            uiState.value.users.find { it.id in chat.users && it.id != currentUser.id }?.name
+                ?: User().name
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    fun convertTime(time: Long) = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
+    fun convertTime(time: Long) =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
 
     @SuppressLint("DefaultLocale")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -91,39 +85,33 @@ class HomeViewModel (
         val today = now.dayOfYear
         when {
             today == time.dayOfYear &&
-                    now.year == time.year -> return let{ String.format("%02d:%02d", now.hour, now.minute) }
+                    now.year == time.year -> return let {
+                String.format(
+                    "%02d:%02d",
+                    now.hour,
+                    now.minute
+                )
+            }
+
             now.year == time.year &&
-                    today == time.dayOfYear -1 -> return "Ontem"
+                    today == time.dayOfYear - 1 -> return "Ontem"
+
             now.year == time.year &&
-                    time.dayOfYear in (today -2 .. today - 7) -> return time.dayOfWeek.toString()
-            else -> return let{ String.format("%02d/%02d/%04d", time.dayOfMonth, time.monthValue, time.year) }
+                    time.dayOfYear in (today - 2..today - 7) -> return time.dayOfWeek.toString()
+
+            else -> return let {
+                String.format(
+                    "%02d/%02d/%04d",
+                    time.dayOfMonth,
+                    time.monthValue,
+                    time.year
+                )
+            }
         }
     }
 
     fun findUserById(id: String) = uiState.value.users.find { it.id == id } ?: User()
 
-    fun getCurrentUser(){
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                currentUser = findUserById(FirebaseAuth.getInstance().currentUser?.uid ?: "")
-            )
-        }
-    }
-
-    fun getCurrentUserChats(){
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                chats = chatRepo.getChats().filter{
-                    uiState.value.currentUser.id in it.users
-                }
-            )
-        }
-    }
-    fun addChatDialog(){
-        _uiState.value = uiState.value.copy(
-            showAddChat = !uiState.value.showAddChat
-        )
-    }
 
     fun onShowAddChat() {
         viewModelScope.launch {
@@ -135,21 +123,22 @@ class HomeViewModel (
         }
     }
 
-    fun addChat(users: List<String>): String{
+    fun addChat(users: List<String>): String {
         val chat = Chat(users = users)
         val chatId = chatRepo.addChat(chat)
         return chatId
     }
 
-    fun checkChatExists(users: List<User>): Boolean{
+    fun checkChatExists(users: List<User>): Boolean {
         val chat = uiState.value.chats.find { it.users.toSet() == users.toSet() }
         return (chat != null)
     }
 
-    fun getChatPhoto(chat: Chat, currentUser: User): String{
+    fun getChatPhoto(chat: Chat, currentUser: User): String {
         return if (chat.users.size > 2) chat.photo
         else {
-            uiState.value.users.find { it.id in chat.users && it.id != currentUser.id }?.photo ?: User().photo
+            uiState.value.users.find { it.id in chat.users && it.id != currentUser.id }?.photo
+                ?: User().photo
         }
     }
 
