@@ -6,6 +6,9 @@ import com.example.agizap.model.Message
 import com.example.agizap.model.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class MessageRepository {
@@ -13,7 +16,7 @@ class MessageRepository {
 
     fun addMessage(chatId: String, message: Message) {
         if (chatId.isBlank()) {
-            Log.e("Firestore", "Erro: chatId está vazio — não é possível salvar a mensagem")
+            Log.e("Firestore", "Erro: chatId vazio — não é possível salvar a mensagem")
             return
         }
 
@@ -31,19 +34,57 @@ class MessageRepository {
 
     suspend fun getMessages(chatId: String): List<Message> {
         return try {
-            val result = Firebase.firestore.collection("chats/${chatId}/messages").get().await()
+            val result = db.collection("chats")
+                .document(chatId)
+                .collection("messages")
+                .orderBy("time")
+                .get()
+                .await()
+
             result.map { doc ->
                 Message(
                     text = doc.getString("text") ?: "",
                     userId = doc.getString("userId") ?: "",
-                    time = doc.getLong("time") ?: 0,
+                    time = doc.getLong("time") ?: 0L,
                     id = doc.id
                 )
-
             }
         } catch (e: Exception) {
             Log.e("Firestore", "Erro ao buscar mensagens", e)
             emptyList()
         }
+    }
+
+    fun listenMessages(chatId: String): Flow<List<Message>> = callbackFlow {
+        if (chatId.isBlank()) {
+            trySend(emptyList())
+            close()
+            return@callbackFlow
+        }
+
+        val listener = db.collection("chats")
+            .document(chatId)
+            .collection("messages")
+            .orderBy("time")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("Firestore", "Erro ao ouvir mensagens", error)
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val messages = snapshot?.documents?.map { doc ->
+                    Message(
+                        text = doc.getString("text").orEmpty(),
+                        userId = doc.getString("userId").orEmpty(),
+                        time = doc.getLong("time") ?: 0L,
+                        id = doc.id
+                    )
+                }?.sortedBy { it.time } ?: emptyList()
+
+                trySend(messages)
+            }
+
+        awaitClose { listener.remove() }
     }
 }

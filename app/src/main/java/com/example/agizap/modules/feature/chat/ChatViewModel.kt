@@ -34,44 +34,19 @@ class ChatViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val auth = FirebaseAuth.getInstance()
-    private var authListener: FirebaseAuth.AuthStateListener? = null
-
-    fun onUpdate(chatId: String){
+    fun onUpdate(chatId: String) {
         viewModelScope.launch {
-            val chatsList = chatRepo.getChats()
-            val usersList = userRepo.getUsers()
-            val currentUser = PreferencesManager(context).getUser() ?: User()
-            val currentChat = chatsList.find { it.id == chatId } ?: Chat()
-            val messages = currentChat.messages
+            val users = userRepo.getUsers()
+            val chats = chatRepo.getChats()
+            val currentUser = PreferencesManager(context).getUser()
+            val currentChat = chats.find { it.id == chatId }
 
-            _uiState.value = uiState.value.copy(
-                users = usersList,
-                chat = currentChat,
-                messages = messages,
-                currentUser = currentUser
-            )
+            if (users.isNotEmpty()) _uiState.value = uiState.value.copy(users = users)
+            if (currentUser != null) _uiState.value = uiState.value.copy(currentUser = currentUser)
+            if (currentChat != null) _uiState.value = uiState.value.copy(chat = currentChat)
         }
     }
 
-
-    suspend fun getChatById(id: String) = chatRepo.getChats().find { it.id == id } ?: Chat()
-
-    fun setChat(chatId: String){
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                chat = chatRepo.getChats().find { it.id == chatId } ?: Chat()
-            )
-        }
-    }
-
-    fun getChatMessages(chatId: String){
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                messages = messageRepo.getMessages(chatId)
-            )
-        }
-    }
 
     fun sendMessage(message: Message, chatId: String){
         messageRepo.addMessage(chatId, message)
@@ -103,7 +78,7 @@ class ChatViewModel @Inject constructor(
         val today = now.dayOfYear
         when {
             today == time.dayOfYear &&
-                    now.year == time.year -> return if (card) let{ String.format("%02d:%02d", now.hour, now.minute) } else "Hoje"
+                    now.year == time.year -> return if (card) let{ String.format("%02d:%02d", time.hour, time.minute) } else "Hoje"
             now.year == time.year &&
                     today == time.dayOfYear -1 -> return "Ontem"
             now.year == time.year &&
@@ -111,7 +86,16 @@ class ChatViewModel @Inject constructor(
             else -> return let{ String.format("%02d/%02d/%04d", time.dayOfMonth, time.monthValue, time.year) }
         }
     }
-    fun findUserById(id: String) = uiState.value.users.find { it.id == id } ?: User()
+
+    fun observeMessages(chatId: String) {
+        viewModelScope.launch {
+            messageRepo.listenMessages(chatId)
+                .collect { messages ->
+                    _uiState.value = uiState.value.copy(messages = messages)
+                }
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkDateComponent(message: Message): Boolean{
@@ -122,11 +106,4 @@ class ChatViewModel @Inject constructor(
         val time2 = convertTime(list[index-1].time)
         return !(time.dayOfYear == time2.dayOfYear && time.year == time2.year)
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        authListener?.let { auth.removeAuthStateListener(it) }
-        authListener = null
-    }
-
 }

@@ -38,6 +38,7 @@ fun ChatScreen(
 ) {
     LaunchedEffect(chatId) {
         viewModel.onUpdate(chatId)
+        viewModel.observeMessages(chatId)
     }
     val uiState by viewModel.uiState.collectAsState()
     Box() {

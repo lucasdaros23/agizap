@@ -76,7 +76,7 @@ fun ChatBottomBar(
             ) {
                 AudioSendButton(
                     text = value,
-                    onTextFieldChange = { onValueChange(value) },
+                    onTextFieldChange = onValueChange,
                     sendMessage = { sendMessage() },
                     onShowAlertClick = { onShowAlertClick() },
                 )

@@ -10,9 +10,11 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavHostController
 import com.example.agizap.modules.navigation.NavGraph
+import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.ui.theme.AgizapTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,9 +30,11 @@ class MainActivity : ComponentActivity() {
             AgizapTheme(dynamicColor = false) {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     val navController: NavHostController = rememberNavController()
-
+                    val context = LocalContext.current
+                    val isLogged = PreferencesManager(context).isLoggedIn()
                     NavGraph(
                         navController = navController,
+                        isLogged = isLogged
                     )
                 }
             }

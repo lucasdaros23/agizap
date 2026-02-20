@@ -13,7 +13,7 @@ import com.example.agizap.modules.components.IconButtonComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarHome(onClick1: () -> Unit, onClick2: () -> Unit) {
+fun TopBarHome(onClick1: () -> Unit, onClickLogout: () -> Unit) {
     Column() {
         TopAppBar(
             title = { Text(text = "Agizap", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold) },
@@ -23,10 +23,8 @@ fun TopBarHome(onClick1: () -> Unit, onClick2: () -> Unit) {
                     onClick = { onClick1() },
                     size = 30
                 )
-                IconButtonComponent(
-                    painter = painterResource(R.drawable.opcoes),
-                    onClick = { onClick2() },
-                    size = 20
+                DropDownOptions(
+                    onClickLogout = onClickLogout
                 )
             }
         )

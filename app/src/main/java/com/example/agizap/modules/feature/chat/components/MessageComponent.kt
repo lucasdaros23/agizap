@@ -47,11 +47,14 @@ fun MessageComponent(message: Message, formatedTime: String, sent: Boolean) {
                     color = MaterialTheme.colorScheme.tertiary,
                     fontSize = 13.sp,
                 )
-                SeenIcon(
-                    modifier = Modifier
-                        .size(22.dp)
-                        .padding(bottom = 2.dp)
-                )
+                if (sent){
+
+                    SeenIcon(
+                        modifier = Modifier
+                            .size(22.dp)
+                            .padding(bottom = 2.dp)
+                    )
+                }
             }
         }
     }

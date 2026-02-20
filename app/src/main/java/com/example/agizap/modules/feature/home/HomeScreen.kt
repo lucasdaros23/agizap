@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.agizap.R
 import com.example.agizap.model.Message
 import com.example.agizap.modules.components.Alert
@@ -35,14 +35,14 @@ import com.example.agizap.modules.feature.home.components.ChatCard
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    navController: NavController,
+    navController: NavHostController,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             TopBarHome(
                 onClick1 = { viewModel.onShowAlert() },
-                onClick2 = { viewModel.onShowAlert() },
+                onClickLogout = { viewModel.logout(navController) }
             )
         }
     ) { innerPadding ->
@@ -106,7 +106,7 @@ fun HomeScreen(
             }
             if (uiState.showAddChat) {
                 AddChatDialog(
-                    uiState.users,
+                    uiState.users.filter { it.id != uiState.currentUser.id },
                     onClick = { viewModel.onShowAddChat() },
                     onItemClick = {
                         if (!viewModel.checkChatExists(listOf(uiState.currentUser, it))){

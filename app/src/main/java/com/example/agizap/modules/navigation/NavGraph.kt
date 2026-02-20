@@ -17,15 +17,17 @@ import com.example.agizap.modules.feature.login.LoginScreen
 import com.example.agizap.modules.feature.login.LoginViewModel
 import com.example.agizap.modules.feature.register.RegisterScreen
 import com.example.agizap.modules.feature.register.RegisterViewModel
+import com.example.agizap.modules.preferences.PreferencesManager
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
     navController: NavHostController,
+    isLogged: Boolean
 ){
     NavHost(
         navController = navController,
-        startDestination = Routes.LOGIN
+        startDestination = if (isLogged) Routes.HOME else Routes.LOGIN
     ){
         composable(Routes.HOME){
             val homeViewModel: HomeViewModel = hiltViewModel()

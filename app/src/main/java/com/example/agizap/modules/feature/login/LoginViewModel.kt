@@ -4,7 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agizap.model.User
 import com.example.agizap.modules.preferences.PreferencesManager
+import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -16,12 +18,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(): ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val userRepo: UserRepository
+): ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
     private val auth = FirebaseAuth.getInstance()
+
+
+    init{
+        loadUsers()
+    }
 
     fun login(context: Context, email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
@@ -32,10 +41,12 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                 )
                 onShowAlert()
 
-                val user = result.user
+                val user = uiState.value.users.find { it.id == result.user?.uid }
+
                 if (user != null) {
                     val prefs = PreferencesManager(context)
-                    prefs.saveUserData(user.uid, user.email ?: "")
+
+                    prefs.saveUser(user)
                 }
             }
             .addOnFailureListener { e ->
@@ -50,9 +61,13 @@ class LoginViewModel @Inject constructor(): ViewModel() {
             }
     }
 
-    fun logout() {
-        auth.signOut()
+    fun loadUsers(){
+        viewModelScope.launch {
+            val users = userRepo.getUsers()
+            if (users.isNotEmpty()) _uiState.value = uiState.value.copy(users = users)
+        }
     }
+
     fun onEmailChange(value: String){
         _uiState.value = uiState.value.copy(
             email = value

@@ -14,6 +14,8 @@ import com.example.agizap.modules.preferences.PreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import android.content.Context
+import androidx.navigation.NavHostController
+import com.example.agizap.modules.navigation.Routes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +33,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+    private val auth = FirebaseAuth.getInstance()
+
 
     init{
         onUpdate()
@@ -39,15 +43,14 @@ class HomeViewModel @Inject constructor(
     fun onUpdate() {
         viewModelScope.launch {
             val chatsList = chatRepo.getChats()
-            val usersList = userRepo.getUsers()
-            val currentUser = PreferencesManager(context).getUser() ?: User()
-            val currentUserChats = chatsList.filter { currentUser.id in it.users }
+            val users = userRepo.getUsers()
+            val currentUser = PreferencesManager(context).getUser()
+            val currentUserChats = chatsList.filter { currentUser?.id in it.users }
 
-            _uiState.value = uiState.value.copy(
-                users = usersList,
-                currentUser = currentUser,
-                chats = currentUserChats
-            )
+            if (users.isNotEmpty()) _uiState.value = uiState.value.copy(users = users)
+            if (currentUser != null) _uiState.value = uiState.value.copy(currentUser = currentUser)
+            if (currentUserChats.isNotEmpty()) _uiState.value = uiState.value.copy(chats = currentUserChats)
+
         }
     }
 
@@ -141,5 +144,12 @@ class HomeViewModel @Inject constructor(
                 ?: User().photo
         }
     }
+
+    fun logout(navController: NavHostController) {
+        auth.signOut()
+        PreferencesManager(context).clear()
+        navController.navigate(Routes.LOGIN) {
+            popUpTo(Routes.HOME) { inclusive = true }
+        }    }
 
 }

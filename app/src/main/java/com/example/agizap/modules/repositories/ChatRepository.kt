@@ -11,45 +11,59 @@ class ChatRepository {
     private val db = Firebase.firestore
     private val path = "chats"
 
-    constructor()
-
     fun addChat(chat: Chat): String {
         val ref = db.collection(path).document()
         val chatId = ref.id
-        val chatWithId = chat.copy(id = chatId)
-        ref.set(chatWithId)
+
+        // salva apenas os dados essenciais
+        val chatData = hashMapOf(
+            "id" to chatId,
+            "users" to chat.users,
+            "name" to chat.name,
+            "photo" to chat.photo
+        )
+
+        ref.set(chatData)
             .addOnSuccessListener {
-                Log.d("Firestore", "Adicionado com ID: $chatId")
+                Log.d("Firestore", "Chat adicionado com ID: $chatId")
             }
             .addOnFailureListener { e ->
-                Log.w("Firestore", "Falha ao adicionar documento", e)
+                Log.w("Firestore", "Falha ao adicionar chat", e)
             }
+
         return chatId
     }
 
     suspend fun getChats(): List<Chat> {
         return try {
-            val result = Firebase.firestore.collection(path).get().await()
-            result.map { chatDoc ->
-                val messagesSnapshot = chatDoc.reference.collection("messages").get().await()
-                val messages = messagesSnapshot.map{ messageDoc ->
+            val snapshot = db.collection(path).get().await()
+            snapshot.map { doc ->
+                val chatId = doc.id
+                val messagesSnapshot = doc.reference
+                    .collection("messages")
+                    .orderBy("time") // ordena por data
+                    .get()
+                    .await()
+
+                val messages = messagesSnapshot.map { messageDoc ->
                     Message(
                         text = messageDoc.getString("text") ?: "",
                         userId = messageDoc.getString("userId") ?: "",
-                        time = messageDoc.getLong("time") ?: 0,
+                        time = messageDoc.getLong("time") ?: 0L,
                         id = messageDoc.id
                     )
                 }
+
                 Chat(
-                    name = chatDoc.getString("name") ?: "",
-                    messages = messages.sortedBy { it.time },
-                    users = chatDoc.get("users") as List<String>,
-                    id = chatDoc.id,
-                    photo = chatDoc.getString("photo") ?: ""
+                    id = chatId,
+                    name = doc.getString("name") ?: "",
+                    photo = doc.getString("photo") ?: "",
+                    users = doc.get("users") as? List<String> ?: emptyList(),
+                    messages = messages
                 )
             }
         } catch (e: Exception) {
-            Log.e("Firestore", "Erro ao buscar conversas", e)
+            Log.e("Firestore", "Erro ao buscar chats", e)
             emptyList()
         }
     }
