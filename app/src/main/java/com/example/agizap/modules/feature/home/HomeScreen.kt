@@ -63,24 +63,24 @@ fun HomeScreen(
                         )
                     },
                 )
-                Box() {
-                    LazyColumn() {
-                        viewModel.onUpdate()
-                        items(viewModel.chatsSortedByDate()) {
-                            if (uiState.currentUser.id in it.users){
-                                ChatCard(
-                                    chat = it,
-                                    onclick = { navController.navigate("chat/${it.id}") },
-                                    time = viewModel.formatTime(viewModel.convertTime(it.messages.lastOrNull()?.time ?: System.currentTimeMillis())),
-                                    chatName = viewModel.getChatName(it, uiState.currentUser),
-                                    checkSent = viewModel.checkSent(
-                                        uiState.currentUser,
-                                        it.messages.lastOrNull() ?: Message()
-                                    ),
-                                    photo = viewModel.getChatPhoto(it, uiState.currentUser)
+                LazyColumn() {
+                    items(viewModel.filterUsers()) {
+                        ChatCard(
+                            chat = it,
+                            onclick = { navController.navigate("chat/${it.id}") },
+                            time = viewModel.formatTime(
+                                viewModel.convertTime(
+                                    it.messages.lastOrNull()?.time
+                                        ?: System.currentTimeMillis()
                                 )
-                            }
-                        }
+                            ),
+                            chatName = viewModel.getChatName(it, uiState.currentUser),
+                            checkSent = viewModel.checkSent(
+                                uiState.currentUser,
+                                it.messages.lastOrNull() ?: Message()
+                            ),
+                            photo = viewModel.getChatPhoto(it, uiState.currentUser)
+                        )
                     }
                 }
             }
@@ -109,10 +109,11 @@ fun HomeScreen(
                     uiState.users.filter { it.id != uiState.currentUser.id },
                     onClick = { viewModel.onShowAddChat() },
                     onItemClick = {
-                        if (!viewModel.checkChatExists(listOf(uiState.currentUser, it))){
-                            val chatId = viewModel.addChat(listOf(uiState.currentUser.id, it.id))
-                            navController.navigate("chat/${chatId}")
+                        var chatId = viewModel.checkChatExists(listOf(uiState.currentUser.id, it.id))
+                        if (chatId == "") {
+                            chatId = viewModel.addChat(listOf(uiState.currentUser.id, it.id))
                         }
+                        navController.navigate("chat/${chatId}")
                         viewModel.onShowAddChat()
                     }
                 )

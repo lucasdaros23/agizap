@@ -14,6 +14,7 @@ import com.example.agizap.modules.preferences.PreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import android.content.Context
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.agizap.modules.navigation.Routes
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -91,8 +92,8 @@ class HomeViewModel @Inject constructor(
                     now.year == time.year -> return let {
                 String.format(
                     "%02d:%02d",
-                    now.hour,
-                    now.minute
+                    time.hour,
+                    time.minute
                 )
             }
 
@@ -132,9 +133,9 @@ class HomeViewModel @Inject constructor(
         return chatId
     }
 
-    fun checkChatExists(users: List<User>): Boolean {
+    fun checkChatExists(users: List<String>): String {
         val chat = uiState.value.chats.find { it.users.toSet() == users.toSet() }
-        return (chat != null)
+        return  chat?.id ?: ""
     }
 
     fun getChatPhoto(chat: Chat, currentUser: User): String {
@@ -150,6 +151,15 @@ class HomeViewModel @Inject constructor(
         PreferencesManager(context).clear()
         navController.navigate(Routes.LOGIN) {
             popUpTo(Routes.HOME) { inclusive = true }
-        }    }
+        }
+    }
+
+    fun filterUsers(): List<Chat>{
+        val list: List<Chat> = if (uiState.value.textField == "") chatsSortedByDate()
+        else {
+            chatsSortedByDate().filter{ getChatName(it, uiState.value.currentUser).contains(uiState.value.textField) }
+        }
+        return list.filter { uiState.value.currentUser.id in it.users }
+    }
 
 }
