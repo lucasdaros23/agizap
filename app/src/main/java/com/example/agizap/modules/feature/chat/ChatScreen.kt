@@ -67,7 +67,7 @@ fun ChatScreen(
                     sendMessage = {
                         viewModel.sendMessage(
                             Message(
-                                text = uiState.textField,
+                                text = uiState.textField.trim(),
                                 userId = uiState.currentUser.id,
                                 time = System.currentTimeMillis(),
                             ),
@@ -119,9 +119,8 @@ fun ChatScreen(
                     ) {
                         MessageComponent(
                             message = it,
-                            formatedTime = viewModel.formatTime(
+                            formatedTime = viewModel.getMessageTime(
                                 time = viewModel.convertTime(it.time),
-                                card = true
                             ),
                             sent = viewModel.checkSent(
                                 user = uiState.currentUser,

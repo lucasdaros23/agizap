@@ -37,10 +37,10 @@ fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, us
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 ImageFromUrl(
-                    if (!isGroup) user.photo else chat.photo,
+                    if (isGroup) user.photo else chat.photo,
                     modifier = Modifier.size(50.dp).clip(CircleShape))
                 Spacer(modifier = Modifier.size(15.dp))
-                Text(if (!isGroup) user.name else chat.name)
+                Text(if (isGroup) user.name else chat.name)
             }
         },
         actions = {

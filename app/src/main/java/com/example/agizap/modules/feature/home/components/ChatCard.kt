@@ -45,10 +45,15 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
                 )
             }
             Row(){
+                val text = lastMessage?.text ?: ""
                 if (checkSent){
                     SeenIcon(modifier = Modifier.size(24.dp))
                 }
-                Text(text = lastMessage?.text ?: "", color = MaterialTheme.colorScheme.onTertiary)
+                Text(
+                    text = if (text.length < 17) text
+                    else text.take(15) + "..."
+                        , color = MaterialTheme.colorScheme.onTertiary
+                )
             }
         }
     }

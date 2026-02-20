@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun chatsSortedByDate() =
-        uiState.value.chats.sortedBy { it.messages.lastOrNull()?.time ?: 0L }
+        uiState.value.chats.sortedByDescending { it.messages.lastOrNull()?.time ?: 0L }
 
     fun onShowAlert() {
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)

@@ -87,6 +87,11 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("DefaultLocale")
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getMessageTime(time: LocalDateTime) = let{ String.format("%02d:%02d", time.hour, time.minute) }
+
+
     fun observeMessages(chatId: String) {
         viewModelScope.launch {
             messageRepo.listenMessages(chatId)
@@ -95,7 +100,6 @@ class ChatViewModel @Inject constructor(
                 }
         }
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkDateComponent(message: Message): Boolean{

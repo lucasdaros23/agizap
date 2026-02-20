@@ -1,7 +1,9 @@
 package com.example.agizap.modules.feature.chat.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,36 +28,74 @@ fun MessageComponent(message: Message, formatedTime: String, sent: Boolean) {
                 shape = RoundedCornerShape(11.dp)
             )
     ){
-        Row(
-            verticalAlignment = Alignment.Bottom
-        ){
-            Text(
-                text = message.text,
-                color = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(end = 10.dp, top = 10.dp, start = 10.dp, bottom = 7.dp),
-                fontSize = 20.sp
-            )
+        if(message.text.length < 17) {
             Row(
-                modifier = Modifier
-                    .padding(end = 4.dp)
-                    .weight(1f, fill = false),
                 verticalAlignment = Alignment.Bottom
             ) {
-
                 Text(
-                    text = (formatedTime),
+                    text = message.text,
                     color = MaterialTheme.colorScheme.tertiary,
-                    fontSize = 13.sp,
+                    modifier = Modifier.padding(
+                        end = 10.dp,
+                        top = 10.dp,
+                        start = 10.dp,
+                        bottom = 7.dp
+                    ),
+                    fontSize = 20.sp
                 )
-                if (sent){
+                Row(
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .weight(1f, fill = false),
+                    verticalAlignment = Alignment.Bottom
+                ) {
 
-                    SeenIcon(
-                        modifier = Modifier
-                            .size(22.dp)
-                            .padding(bottom = 2.dp)
+                    Text(
+                        text = (formatedTime),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontSize = 13.sp,
                     )
+                    if (sent) {
+                        SeenIcon(
+                            modifier = Modifier
+                                .size(22.dp)
+                                .padding(bottom = 2.dp)
+                        )
+                    }
+                }
+            }
+        }else{
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.End
+            ){
+                Text(
+                    text = message.text,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.padding(end = 10.dp, top = 10.dp, start = 10.dp, bottom = 0.dp),
+                    fontSize = 20.sp
+                )
+                Row(
+                    modifier = Modifier
+                        .padding(end = 4.dp),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+
+                    Text(
+                        text = (formatedTime),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontSize = 13.sp,
+                    )
+                    if (sent){
+                        SeenIcon(
+                            modifier = Modifier
+                                .size(22.dp)
+                                .padding(bottom = 2.dp)
+                        )
+                    }
                 }
             }
         }
+
     }
 }

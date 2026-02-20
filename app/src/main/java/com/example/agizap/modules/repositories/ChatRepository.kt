@@ -15,7 +15,6 @@ class ChatRepository {
         val ref = db.collection(path).document()
         val chatId = ref.id
 
-        // salva apenas os dados essenciais
         val chatData = hashMapOf(
             "id" to chatId,
             "users" to chat.users,
