@@ -9,5 +9,6 @@ data class LoginUiState(
     val message: String = "",
     val success: Boolean = false,
     val buttonEnabled: Boolean = true,
-    val users: List<User> = emptyList()
+    val users: List<User> = emptyList(),
+    val alertLogin: Boolean = true
 )

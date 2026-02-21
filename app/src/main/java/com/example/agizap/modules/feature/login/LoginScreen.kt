@@ -9,17 +9,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.example.agizap.R
+import com.example.agizap.modules.components.AgiZapIcon
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ConfirmButton
 import com.example.agizap.modules.feature.login.components.LoginTextButton
@@ -60,6 +64,7 @@ fun LoginScreen(
                         viewModel.login(context, uistate.email, uistate.password)
                     }else{
                         viewModel.onChangeMessage("Preencha todos os campos corretamente")
+                        viewModel.setAlertLogin(true)
                         viewModel.onShowAlert()
                     }
                 },
@@ -80,6 +85,7 @@ fun LoginScreen(
                     text = "Redefinir senha",
                     onClick = {
                         viewModel.onChangeMessage("Essa função ainda não foi implementada")
+                        viewModel.setAlertLogin(false)
                         viewModel.onShowAlert()
                     }
 
@@ -93,7 +99,9 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Agizap", fontSize = 80.sp)
+            AgiZapIcon(
+                modifier = Modifier.size(200.dp)
+            )
         }
 
         if (uistate.showAlert){
@@ -102,7 +110,7 @@ fun LoginScreen(
                 confirmText = "OK",
                 confirmAction = {
                     viewModel.onShowAlert()
-                    viewModel.onButtonEnabled()
+                    if (uistate.alertLogin) viewModel.onButtonEnabled()
                     if (uistate.success){
                         navController.navigate(Routes.HOME) {
                             popUpTo(Routes.LOGIN) { inclusive = true }

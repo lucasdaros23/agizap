@@ -93,4 +93,8 @@ class LoginViewModel @Inject constructor(
     fun onButtonEnabled(){
         _uiState.value = uiState.value.copy(buttonEnabled = !uiState.value.buttonEnabled)
     }
+
+    fun setAlertLogin(value: Boolean){
+        _uiState.value = uiState.value.copy(alertLogin = value)
+    }
 }
