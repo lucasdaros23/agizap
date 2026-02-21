@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -43,6 +44,11 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
     private val auth = FirebaseAuth.getInstance()
+
+    init {
+        onUpdate()
+        observeData()
+    }
 
     fun onUpdate() {
         viewModelScope.launch {
@@ -179,12 +185,14 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             chatRepo.listenChats()
                 .flatMapLatest { chats ->
-                    val flows = chats.map { chat ->
-                        messageRepo.listenMessages(chat.id)
-                            .map { messages -> chat.copy(messages = messages) }
-                    }
-                    combine(flows) { updatedChats ->
-                        updatedChats.toList()
+                    if (chats.isEmpty()) {
+                        flowOf(emptyList())
+                    } else {
+                        val flows = chats.map { chat ->
+                            messageRepo.listenMessages(chat.id)
+                                .map { messages -> chat.copy(messages = messages) }
+                        }
+                        combine(flows) { it.toList() }
                     }
                 }
                 .collect { updatedChats ->

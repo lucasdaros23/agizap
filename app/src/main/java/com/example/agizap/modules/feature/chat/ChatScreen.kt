@@ -1,5 +1,6 @@
 package com.example.agizap.modules.feature.chat
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,7 +30,9 @@ import com.example.agizap.modules.feature.chat.components.ChatBottomBar
 import com.example.agizap.modules.feature.chat.components.ChatTopBar
 import com.example.agizap.modules.feature.chat.components.DateComponent
 import com.example.agizap.modules.feature.chat.components.MessageComponent
+import kotlinx.coroutines.delay
 
+@SuppressLint("UnrememberedMutableState")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChatScreen(
@@ -47,15 +51,14 @@ fun ChatScreen(
                 val otherUser =
                     uiState.users.find { it.id in uiState.chat.users && it.id != uiState.currentUser.id }
                         ?: User()
-
                 ChatTopBar(
                     onClickBack = {
-                        navController.popBackStack()
+                        viewModel.onBackButton { navController.popBackStack() }
                     },
                     onClickOther = { viewModel.onShowAlert() },
                     user = otherUser,
                     chat = uiState.chat,
-                    isGroup = (uiState.users.size > 2)
+                    isGroup = (uiState.users.size > 2),
                 )
             },
             bottomBar = {

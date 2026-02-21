@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.agizap.model.Chat
 import com.example.agizap.model.Message
 import com.example.agizap.model.User
@@ -16,6 +17,7 @@ import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -124,5 +126,20 @@ class ChatViewModel @Inject constructor(
         observeUsers()
         observeMessages(chatId)
         onUpdate(chatId)
+    }
+
+    fun onBackButton(action: () -> Unit){
+        if (uiState.value.backEnabled){
+            _uiState.value = uiState.value.copy(
+                backEnabled = false
+            )
+            action()
+            viewModelScope.launch {
+                delay(1000)
+                _uiState.value = uiState.value.copy(
+                    backEnabled = true
+                )
+            }
+        }
     }
 }

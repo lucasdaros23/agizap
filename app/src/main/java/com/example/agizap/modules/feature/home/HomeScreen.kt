@@ -38,9 +38,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navController: NavHostController,
 ) {
-    LaunchedEffect(navController, Unit) {
-        viewModel.observeData()
-    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {

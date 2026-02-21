@@ -36,7 +36,7 @@ fun RegisterScreen(
             Modifier.padding(10.dp),
         ) {
             ReturnButton(
-                onClick = { navController.popBackStack() }
+                onClick = { viewModel.onBackButton { navController.popBackStack() } }
             )
         }
         Column(

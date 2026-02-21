@@ -8,4 +8,5 @@ data class RegisterUiState(
     val message: String = "",
     val success: Boolean = false,
     val buttonEnabled: Boolean = true,
+    val backEnabled: Boolean = true
 )

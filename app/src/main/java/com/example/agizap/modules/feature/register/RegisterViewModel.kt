@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -100,4 +101,19 @@ class RegisterViewModel @Inject constructor(
                 onShowAlert()
             }
         }
-    }}
+    }
+    fun onBackButton(action: () -> Unit){
+        if (uiState.value.backEnabled){
+            _uiState.value = uiState.value.copy(
+                backEnabled = false
+            )
+            action()
+            viewModelScope.launch {
+                delay(1000)
+                _uiState.value = uiState.value.copy(
+                    backEnabled = true
+                )
+            }
+        }
+    }
+}
