@@ -37,8 +37,7 @@ fun ChatScreen(
     navController: NavHostController
 ) {
     LaunchedEffect(chatId) {
-        viewModel.onUpdate(chatId)
-        viewModel.observeMessages(chatId)
+        viewModel.observeData(chatId)
     }
     val uiState by viewModel.uiState.collectAsState()
     Box() {

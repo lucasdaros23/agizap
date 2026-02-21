@@ -4,6 +4,9 @@ import android.util.Log
 import com.example.agizap.model.User
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class UserRepository {
@@ -35,5 +38,28 @@ class UserRepository {
             Log.e("Firestore", "Erro ao buscar usuários", e)
             emptyList()
         }
+    }
+    fun listenUsers(): Flow<List<User>> = callbackFlow {
+        val listener = Firebase.firestore.collection("users")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("Firestore", "Erro ao ouvir usuários", error)
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val users = snapshot?.documents?.map { doc ->
+                    User(
+                        name = doc.getString("name").orEmpty(),
+                        photo = doc.getString("photo").orEmpty(),
+                        id = doc.id,
+                        email = doc.getString("email").orEmpty()
+                    )
+                } ?: emptyList()
+
+                trySend(users)
+            }
+
+        awaitClose { listener.remove() }
     }
 }

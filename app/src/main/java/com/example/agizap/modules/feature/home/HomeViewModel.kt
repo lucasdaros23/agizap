@@ -17,29 +17,32 @@ import android.content.Context
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.agizap.modules.navigation.Routes
+import com.example.agizap.modules.repositories.MessageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.Instant
 import javax.inject.Inject
+import kotlin.collections.toList
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userRepo: UserRepository,
     private val chatRepo: ChatRepository,
+    private val messageRepo: MessageRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
     private val auth = FirebaseAuth.getInstance()
-
-
-    init{
-        onUpdate()
-    }
 
     fun onUpdate() {
         viewModelScope.launch {
@@ -160,6 +163,40 @@ class HomeViewModel @Inject constructor(
             chatsSortedByDate().filter{ getChatName(it, uiState.value.currentUser).contains(uiState.value.textField) }
         }
         return list.filter { uiState.value.currentUser.id in it.users }
+    }
+
+    fun observeUsers() {
+        viewModelScope.launch {
+            userRepo.listenUsers()
+                .collect {
+                    _uiState.value = uiState.value.copy(users = it)
+                }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeChats() {
+        viewModelScope.launch {
+            chatRepo.listenChats()
+                .flatMapLatest { chats ->
+                    val flows = chats.map { chat ->
+                        messageRepo.listenMessages(chat.id)
+                            .map { messages -> chat.copy(messages = messages) }
+                    }
+                    combine(flows) { updatedChats ->
+                        updatedChats.toList()
+                    }
+                }
+                .collect { updatedChats ->
+                    _uiState.value = _uiState.value.copy(chats = updatedChats)
+                }
+        }
+    }
+
+    fun observeData() {
+        onUpdate()
+        observeUsers()
+        observeChats()
     }
 
 }

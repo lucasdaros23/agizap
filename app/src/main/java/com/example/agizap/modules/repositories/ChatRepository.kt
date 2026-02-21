@@ -5,6 +5,9 @@ import com.example.agizap.model.Chat
 import com.example.agizap.model.Message
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class ChatRepository {
@@ -65,5 +68,29 @@ class ChatRepository {
             Log.e("Firestore", "Erro ao buscar chats", e)
             emptyList()
         }
+    }
+    fun listenChats(): Flow<List<Chat>> = callbackFlow {
+        val listener = Firebase.firestore.collection("chats")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("Firestore", "Erro ao ouvir chats", error)
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val chats = snapshot?.documents?.map { doc ->
+                    Chat(
+                        id = doc.id,
+                        name = doc.getString("name").orEmpty(),
+                        photo = doc.getString("photo").orEmpty(),
+                        users = doc.get("users") as? List<String> ?: emptyList(),
+                        messages = emptyList()
+                    )
+                } ?: emptyList()
+
+                trySend(chats)
+            }
+
+        awaitClose { listener.remove() }
     }
 }

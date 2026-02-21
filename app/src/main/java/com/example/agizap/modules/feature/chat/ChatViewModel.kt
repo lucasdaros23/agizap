@@ -95,11 +95,20 @@ class ChatViewModel @Inject constructor(
     fun observeMessages(chatId: String) {
         viewModelScope.launch {
             messageRepo.listenMessages(chatId)
-                .collect { messages ->
-                    _uiState.value = uiState.value.copy(messages = messages)
+                .collect {
+                    _uiState.value = uiState.value.copy(messages = it)
                 }
         }
     }
+
+    fun observeUsers() {
+        viewModelScope.launch {
+            userRepo.listenUsers().collect {
+                _uiState.value = _uiState.value.copy(users = it)
+            }
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkDateComponent(message: Message): Boolean{
@@ -109,5 +118,11 @@ class ChatViewModel @Inject constructor(
         val time = convertTime(message.time)
         val time2 = convertTime(list[index-1].time)
         return !(time.dayOfYear == time2.dayOfYear && time.year == time2.year)
+    }
+
+    fun observeData(chatId: String){
+        observeUsers()
+        observeMessages(chatId)
+        onUpdate(chatId)
     }
 }
