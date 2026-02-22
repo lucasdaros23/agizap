@@ -28,8 +28,10 @@ import com.example.agizap.modules.components.TextFieldComponent
 import com.example.agizap.modules.components.UserProfilePicture
 import com.example.agizap.modules.feature.home.components.AddChatButton
 import com.example.agizap.modules.feature.home.components.AddChatDialog
+import com.example.agizap.modules.feature.home.components.ChangeNameDialog
 import com.example.agizap.modules.feature.home.components.TopBarHome
 import com.example.agizap.modules.feature.home.components.ChatCard
+import com.example.agizap.modules.feature.home.components.EditProfileDialog
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +46,8 @@ fun HomeScreen(
         topBar = {
             TopBarHome(
                 onClick1 = { viewModel.onShowAlert() },
-                onClickLogout = { viewModel.logout(navController) }
+                onClickLogout = { viewModel.logout(navController) },
+                onClickEdit = {viewModel.onShowEditProfile() }
             )
         }
     ) { innerPadding ->
@@ -118,7 +121,7 @@ fun HomeScreen(
             }
             if (uiState.showAddChat) {
                 AddChatDialog(
-                    uiState.users.filter { it.id != uiState.currentUser.id },
+                    uiState.users.filter { it.id != uiState.currentUser.id && it.active },
                     onClick = { viewModel.onShowAddChat() },
                     onItemClick = {
                         var chatId = viewModel.checkChatExists(listOf(uiState.currentUser.id, it.id))
@@ -141,6 +144,23 @@ fun HomeScreen(
                         viewModel.onShowPhoto()
                     },
                     onHome = true
+                )
+            }
+            if (uiState.showEditProfile){
+                EditProfileDialog(
+                    uiState.currentUser,
+                    onDismiss = { viewModel.onShowEditProfile() },
+                    onChangeName = {  },
+                    onChangePhoto = {},
+                    onDeleteAccount = {}
+                )
+            }
+            if(uiState.showEditName){
+                ChangeNameDialog(
+                    user = uiState.currentUser,
+                    onDismiss = {},
+                    onTextFieldChange = {},
+                    onConfirm = {}
                 )
             }
         }

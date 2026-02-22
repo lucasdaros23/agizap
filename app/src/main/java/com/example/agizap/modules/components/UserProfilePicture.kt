@@ -50,15 +50,13 @@ fun UserProfilePicture( // MUDAR PRA SER UM DIALOG EM VEZ DO BOX
         )
     ) {
         Surface(
-            modifier = Modifier.size(300.dp)
+            modifier = Modifier.width(300.dp).height(330.dp)
         ){
                 Box(
                 ) {
                     ImageFromUrl(
                         url = photo,
-                        modifier = Modifier
-                            .width(3000.dp)
-                            .height(340.dp)
+                        modifier = Modifier.fillMaxSize()
                             .clip(shape = RectangleShape)
                     )
                     Box(

@@ -17,7 +17,7 @@ import com.example.agizap.R
 import com.example.agizap.modules.components.IconButtonComponent
 
 @Composable
-fun DropDownOptions(onClickLogout: () -> Unit) {
+fun DropDownOptions(onClickLogout: () -> Unit, onClickEdit: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -34,7 +34,7 @@ fun DropDownOptions(onClickLogout: () -> Unit) {
                 text = { Text("Editar perfil") },
                 onClick = {
                     expanded = false
-                    // telinha de editar perfil aqui
+                    onClickEdit()
                 }
             )
             DropdownMenuItem(

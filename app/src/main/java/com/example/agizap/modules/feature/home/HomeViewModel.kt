@@ -168,6 +168,7 @@ class HomeViewModel @Inject constructor(
         else {
             chatsSortedByDate().filter{ getChatName(it, uiState.value.currentUser).contains(uiState.value.textField) }
         }
+
         return list.filter { uiState.value.currentUser.id in it.users }
     }
 
@@ -206,6 +207,11 @@ class HomeViewModel @Inject constructor(
             showPhoto = !uiState.value.showPhoto
         )
     }
+    fun onShowEditProfile(){
+        _uiState.value = uiState.value.copy(
+            showEditProfile = !uiState.value.showEditProfile
+        )
+    }
 
     fun setForPhoto(name: String, image: String, chatId: String){
         _uiState.value = uiState.value.copy(
@@ -222,4 +228,9 @@ class HomeViewModel @Inject constructor(
         observeChats()
     }
 
+    fun onTextNameChange(value: String) {
+        _uiState.value = uiState.value.copy(
+
+        )
+    }
 }

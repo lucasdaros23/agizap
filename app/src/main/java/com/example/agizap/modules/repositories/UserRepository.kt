@@ -31,7 +31,8 @@ class UserRepository {
                     name = doc.getString("name") ?: "",
                     photo = doc.getString("photo") ?: "",
                     id = doc.id,
-                    email = doc.getString("email") ?: ""
+                    email = doc.getString("email") ?: "",
+                    active = doc.getBoolean("active") ?: false
                 )
             }
         } catch (e: Exception) {
@@ -53,7 +54,8 @@ class UserRepository {
                         name = doc.getString("name").orEmpty(),
                         photo = doc.getString("photo").orEmpty(),
                         id = doc.id,
-                        email = doc.getString("email").orEmpty()
+                        email = doc.getString("email").orEmpty(),
+                        active = doc.getBoolean("active") ?: false
                     )
                 } ?: emptyList()
 
