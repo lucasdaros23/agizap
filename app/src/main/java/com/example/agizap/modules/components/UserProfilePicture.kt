@@ -8,10 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,12 +28,14 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.example.agizap.R
 import com.example.agizap.model.Chat
 import com.example.agizap.model.User
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfilePicture(
+fun UserProfilePicture( // MUDAR PRA SER UM DIALOG EM VEZ DO BOX
     name: String,
     photo: String,
     onQuit: () -> Unit,
@@ -36,64 +43,65 @@ fun UserProfilePicture(
     onShowAlert: () -> Unit,
     onHome: Boolean
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .background(Color(0x66000000))
+    AlertDialog(
+        onDismissRequest = { onQuit() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = true
+        )
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .clickable { onQuit() }
+        Surface(
+            modifier = Modifier.size(300.dp)
         ){
-
-        }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                Modifier.fillMaxWidth(.7f)
-            ) {
-                ImageFromUrl(
-                    url = photo,
-                    modifier = Modifier
-                        .size(280.dp)
-                        .clip(shape = RectangleShape)
-                )
                 Box(
-                    Modifier
-                        .background(Color(0x66000000))
-                        .fillMaxWidth()
-                        .padding(6.dp)
                 ) {
-                    Text(
-                        name,
-                        fontSize = 20.sp
+                    ImageFromUrl(
+                        url = photo,
+                        modifier = Modifier
+                            .width(3000.dp)
+                            .height(340.dp)
+                            .clip(shape = RectangleShape)
                     )
+                    Box(
+                        Modifier
+                            .background(Color(0x66000000))
+                            .fillMaxWidth()
+                            .padding(6.dp)
+                    ) {
+                        Text(
+                            name,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
+                            .align(Alignment.BottomCenter),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        if (onHome) {
+                            IconButtonComponent(
+                                painter = painterResource(R.drawable.message),
+                                onClick = { onClickChat() },
+                                size = 30,
+                            )
+                        }
+                        IconButtonComponent(
+                            painter = painterResource(R.drawable.ligar),
+                            onClick = { onShowAlert() },
+                            size = 30
+                        )
+                        IconButtonComponent(
+                            painter = painterResource(R.drawable.ligarvideo),
+                            onClick = { onShowAlert() },
+                            size = 30
+                        )
+                    }
                 }
-            }
-            Row(
-                Modifier.fillMaxWidth(.7f).background(MaterialTheme.colorScheme.background),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                if (onHome){
-                    IconButtonComponent(
-                        painter = painterResource(R.drawable.message),
-                        onClick = { onClickChat() },
-                        size = 20
-                    )
+                Box {
+
                 }
-                IconButtonComponent(
-                    painter = painterResource(R.drawable.ligar),
-                    onClick = { onShowAlert() },
-                    size = 20
-                )
-                IconButtonComponent(
-                    painter = painterResource(R.drawable.ligarvideo),
-                    onClick = { onShowAlert() },
-                    size = 20
-                )
             }
         }
     }
-}

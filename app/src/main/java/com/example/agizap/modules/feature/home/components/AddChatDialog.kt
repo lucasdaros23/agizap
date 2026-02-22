@@ -41,7 +41,7 @@ fun AddChatDialog(users: List<User>, onClick: () -> Unit, onItemClick: (User) ->
 
                     LazyColumn(modifier = Modifier.fillMaxWidth()) {
                         items(users) {
-                            UserCardSearch(it, onClick = { onItemClick(it)})
+                            UserCardSearch(it, onClick = { onItemClick(it) })
                             Spacer(Modifier.size(5.dp))
                         }
                     }

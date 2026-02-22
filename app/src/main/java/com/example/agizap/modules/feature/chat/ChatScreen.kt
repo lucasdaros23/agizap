@@ -101,7 +101,8 @@ fun ChatScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(horizontal = 20.dp),
-                state = listState
+                state = listState,
+                verticalArrangement = Arrangement.Bottom
             ) {
                 items(messages) {
                     if (viewModel.checkDateComponent(it)) {
