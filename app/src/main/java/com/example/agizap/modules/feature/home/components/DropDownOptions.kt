@@ -31,6 +31,13 @@ fun DropDownOptions(onClickLogout: () -> Unit) {
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
+                text = { Text("Editar perfil") },
+                onClick = {
+                    expanded = false
+                    // telinha de editar perfil aqui
+                }
+            )
+            DropdownMenuItem(
                 text = { Text("Sair") },
                 onClick = {
                     expanded = false

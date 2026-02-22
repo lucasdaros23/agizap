@@ -9,5 +9,9 @@ data class HomeUiState(
     val chats: List<Chat> = emptyList(),
     val showAlert: Boolean = false,
     val currentUser: User = User(),
-    val showAddChat: Boolean = false
+    val showAddChat: Boolean = false,
+    val showPhoto: Boolean = false,
+    val nameForPhoto: String = "",
+    val imageForPhoto: String = "",
+    val chatIdForPhoto: String = "",
 )

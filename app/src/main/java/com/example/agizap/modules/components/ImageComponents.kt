@@ -36,7 +36,7 @@ fun ImageFromUrl(url: String, modifier: Modifier) {
         AsyncImage(
             model = url,
             contentDescription = "Imagem",
-            modifier = Modifier.size(200.dp),
+            modifier = modifier.size(200.dp),
             contentScale = ContentScale.Crop
         )
     }

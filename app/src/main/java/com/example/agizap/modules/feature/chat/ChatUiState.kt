@@ -12,5 +12,6 @@ data class ChatUiState(
     val textField: String = "",
     val currentUser: User = User(),
     val chats: List<Chat> = emptyList(),
-    val backEnabled: Boolean = true
+    val backEnabled: Boolean = true,
+    val showPhoto: Boolean = false,
 )

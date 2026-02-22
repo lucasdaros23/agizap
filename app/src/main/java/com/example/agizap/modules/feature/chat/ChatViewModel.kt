@@ -142,4 +142,10 @@ class ChatViewModel @Inject constructor(
             }
         }
     }
+
+    fun onShowPhoto(){
+        _uiState.value = uiState.value.copy(
+            showPhoto = !uiState.value.showPhoto
+        )
+    }
 }

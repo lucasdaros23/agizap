@@ -1,5 +1,6 @@
 package com.example.agizap.modules.feature.chat.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -23,7 +24,13 @@ import com.example.agizap.modules.components.ImageFromUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, user: User, isGroup: Boolean) {
+fun ChatTopBar(
+    onClickBack: () -> Unit,
+    onClickOther: () -> Unit,
+    chat: Chat, user: User,
+    isGroup: Boolean,
+    onClickPhoto: () -> Unit
+) {
     TopAppBar(
         navigationIcon = {
             IconButtonComponent(
@@ -38,7 +45,11 @@ fun ChatTopBar(onClickBack: () -> Unit, onClickOther: () -> Unit, chat: Chat, us
             Row(verticalAlignment = Alignment.CenterVertically) {
                 ImageFromUrl(
                     if (isGroup) user.photo else chat.photo,
-                    modifier = Modifier.size(50.dp).clip(CircleShape))
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .clickable{ onClickPhoto() }
+                )
                 Spacer(modifier = Modifier.size(15.dp))
                 Text(if (isGroup) user.name else chat.name)
             }

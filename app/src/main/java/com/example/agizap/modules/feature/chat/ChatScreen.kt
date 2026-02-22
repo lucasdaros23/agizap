@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.example.agizap.model.Message
 import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
+import com.example.agizap.modules.components.UserProfilePicture
 import com.example.agizap.modules.feature.chat.components.Background
 import com.example.agizap.modules.feature.chat.components.ChatBottomBar
 import com.example.agizap.modules.feature.chat.components.ChatTopBar
@@ -44,13 +45,14 @@ fun ChatScreen(
         viewModel.observeData(chatId)
     }
     val uiState by viewModel.uiState.collectAsState()
+    val otherUser =
+        uiState.users.find { it.id in uiState.chat.users && it.id != uiState.currentUser.id }
+            ?: User()
     Box() {
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                val otherUser =
-                    uiState.users.find { it.id in uiState.chat.users && it.id != uiState.currentUser.id }
-                        ?: User()
+
                 ChatTopBar(
                     onClickBack = {
                         viewModel.onBackButton { navController.popBackStack() }
@@ -59,6 +61,7 @@ fun ChatScreen(
                     user = otherUser,
                     chat = uiState.chat,
                     isGroup = (uiState.users.size > 2),
+                    onClickPhoto = { viewModel.onShowPhoto() }
                 )
             },
             bottomBar = {
@@ -141,6 +144,17 @@ fun ChatScreen(
                 "OK",
                 "",
                 { viewModel.onShowAlert() },
+            )
+        }
+        if (uiState.showPhoto) {
+            UserProfilePicture(
+                name = if (uiState.chat.users.size > 2) uiState.chat.name else otherUser.name,
+                photo = if (uiState.chat.users.size > 2) uiState.chat.photo else otherUser.photo,
+                onQuit = { viewModel.onShowPhoto() },
+                onShowAlert = { viewModel.onShowAlert() },
+                onClickChat = {},
+                onHome = false
+
             )
         }
     }

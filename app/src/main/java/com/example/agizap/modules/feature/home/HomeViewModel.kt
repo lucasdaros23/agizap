@@ -201,7 +201,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onShowPhoto(){
+        _uiState.value = uiState.value.copy(
+            showPhoto = !uiState.value.showPhoto
+        )
+    }
+
+    fun setForPhoto(name: String, image: String, chatId: String){
+        _uiState.value = uiState.value.copy(
+            nameForPhoto = name,
+            imageForPhoto = image,
+            chatIdForPhoto = chatId
+        )
+    }
+
     fun observeData() {
+        _uiState.value = uiState.value.copy(showPhoto = false)
         onUpdate()
         observeUsers()
         observeChats()

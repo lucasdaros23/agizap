@@ -26,6 +26,7 @@ import com.example.agizap.model.Message
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.IconButtonComponent
 import com.example.agizap.modules.components.TextFieldComponent
+import com.example.agizap.modules.components.UserProfilePicture
 import com.example.agizap.modules.feature.home.components.AddChatButton
 import com.example.agizap.modules.feature.home.components.AddChatDialog
 import com.example.agizap.modules.feature.home.components.TopBarHome
@@ -67,6 +68,8 @@ fun HomeScreen(
                 )
                 LazyColumn() {
                     items(viewModel.filterUsers()) {
+                        val name = viewModel.getChatName(it, uiState.currentUser)
+                        val photo = viewModel.getChatPhoto(it, uiState.currentUser)
                         ChatCard(
                             chat = it,
                             onclick = { navController.navigate("chat/${it.id}") },
@@ -76,12 +79,20 @@ fun HomeScreen(
                                         ?: System.currentTimeMillis()
                                 )
                             ),
-                            chatName = viewModel.getChatName(it, uiState.currentUser),
+                            chatName = name,
                             checkSent = viewModel.checkSent(
                                 uiState.currentUser,
                                 it.messages.lastOrNull() ?: Message()
                             ),
-                            photo = viewModel.getChatPhoto(it, uiState.currentUser)
+                            photo = photo,
+                            onPhotoClick = {
+                                viewModel.setForPhoto(
+                                    name = name,
+                                    image = photo,
+                                    chatId = it.id
+                                )
+                                viewModel.onShowPhoto()
+                            }
                         )
                     }
                 }
@@ -118,6 +129,19 @@ fun HomeScreen(
                         navController.navigate("chat/${chatId}")
                         viewModel.onShowAddChat()
                     }
+                )
+            }
+            if (uiState.showPhoto){
+                UserProfilePicture(
+                    name = uiState.nameForPhoto ,
+                    photo = uiState.imageForPhoto,
+                    onQuit = { viewModel.onShowPhoto() },
+                    onShowAlert = { viewModel.onShowAlert() },
+                    onClickChat = {
+                        navController.navigate("chat/${uiState.chatIdForPhoto}")
+                        viewModel.onShowPhoto()
+                    },
+                    onHome = true
                 )
             }
         }

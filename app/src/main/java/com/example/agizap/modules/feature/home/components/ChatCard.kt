@@ -24,7 +24,7 @@ import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.components.SeenIcon
 
 @Composable
-fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, checkSent: Boolean, photo: String) {
+fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, checkSent: Boolean, photo: String, onPhotoClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clickable(onClick = { onclick() })
@@ -34,7 +34,11 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
     ){
         val mensagens = chat.messages
         val lastMessage = mensagens.lastOrNull()
-        ImageFromUrl(photo, Modifier.size(50.dp).clip(CircleShape))
+        ImageFromUrl(photo, Modifier
+            .size(50.dp)
+            .clip(CircleShape)
+            .clickable{ onPhotoClick() }
+        )
         Spacer(modifier = Modifier.size(10.dp))
         Column() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
