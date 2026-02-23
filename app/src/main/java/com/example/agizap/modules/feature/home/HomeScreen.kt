@@ -32,6 +32,7 @@ import com.example.agizap.modules.feature.home.components.ChangeNameDialog
 import com.example.agizap.modules.feature.home.components.TopBarHome
 import com.example.agizap.modules.feature.home.components.ChatCard
 import com.example.agizap.modules.feature.home.components.EditProfileDialog
+import com.example.agizap.modules.navigation.Routes
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +48,7 @@ fun HomeScreen(
             TopBarHome(
                 onClick1 = { viewModel.onShowAlert() },
                 onClickLogout = { viewModel.logout(navController) },
-                onClickEdit = {viewModel.onShowEditProfile() }
+                onClickEdit = { navController.navigate(Routes.EDIT) }
             )
         }
     ) { innerPadding ->
@@ -144,23 +145,6 @@ fun HomeScreen(
                         viewModel.onShowPhoto()
                     },
                     onHome = true
-                )
-            }
-            if (uiState.showEditProfile){
-                EditProfileDialog(
-                    uiState.currentUser,
-                    onDismiss = { viewModel.onShowEditProfile() },
-                    onChangeName = {  },
-                    onChangePhoto = {},
-                    onDeleteAccount = {}
-                )
-            }
-            if(uiState.showEditName){
-                ChangeNameDialog(
-                    user = uiState.currentUser,
-                    onDismiss = {},
-                    onTextFieldChange = {},
-                    onConfirm = {}
                 )
             }
         }

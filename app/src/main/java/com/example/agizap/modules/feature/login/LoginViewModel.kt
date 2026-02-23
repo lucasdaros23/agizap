@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepo: UserRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
@@ -28,26 +28,31 @@ class LoginViewModel @Inject constructor(
     private val auth = FirebaseAuth.getInstance()
 
 
-    init{
+    init {
         loadUsers()
     }
 
     fun login(context: Context, email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
-                _uiState.value = uiState.value.copy(
-                    message = "Login realizado com sucesso",
-                    success = true
-                )
-                onShowAlert()
-
                 val user = uiState.value.users.find { it.id == result.user?.uid }
+                    if (user != null) {
+                        if (user.active) {
+                            _uiState.value = uiState.value.copy(
+                                message = "Login realizado com sucesso",
+                                success = true
+                            )
+                        val prefs = PreferencesManager(context)
 
-                if (user != null) {
-                    val prefs = PreferencesManager(context)
-
-                    prefs.saveUser(user)
+                        prefs.saveUser(user)
+                    }
                 }
+                else {
+                    _uiState.value = uiState.value.copy(
+                        message = "Erro ao realizar login, usuário desativado",
+                    )
+                }
+                onShowAlert()
             }
             .addOnFailureListener { e ->
                 val msg = when (e) {
@@ -61,40 +66,40 @@ class LoginViewModel @Inject constructor(
             }
     }
 
-    fun loadUsers(){
+    fun loadUsers() {
         viewModelScope.launch {
             val users = userRepo.getUsers()
             if (users.isNotEmpty()) _uiState.value = uiState.value.copy(users = users)
         }
     }
 
-    fun onEmailChange(value: String){
+    fun onEmailChange(value: String) {
         _uiState.value = uiState.value.copy(
             email = value
         )
     }
 
-    fun onPasswordChange(value: String){
+    fun onPasswordChange(value: String) {
         _uiState.value = uiState.value.copy(
             password = value
         )
     }
 
-    fun onChangeMessage(text: String){
+    fun onChangeMessage(text: String) {
         _uiState.value = uiState.value.copy(
             message = text
         )
     }
 
-    fun onShowAlert(){
+    fun onShowAlert() {
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
     }
 
-    fun onButtonEnabled(){
+    fun onButtonEnabled() {
         _uiState.value = uiState.value.copy(buttonEnabled = !uiState.value.buttonEnabled)
     }
 
-    fun setAlertLogin(value: Boolean){
+    fun setAlertLogin(value: Boolean) {
         _uiState.value = uiState.value.copy(alertLogin = value)
     }
 }

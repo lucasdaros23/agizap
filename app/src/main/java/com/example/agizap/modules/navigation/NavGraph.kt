@@ -13,6 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.agizap.modules.feature.chat.ChatScreen
 import com.example.agizap.modules.feature.chat.ChatViewModel
+import com.example.agizap.modules.feature.edit.EditScreen
+import com.example.agizap.modules.feature.edit.EditViewModel
 import com.example.agizap.modules.feature.login.LoginScreen
 import com.example.agizap.modules.feature.login.LoginViewModel
 import com.example.agizap.modules.feature.register.RegisterScreen
@@ -53,7 +55,13 @@ fun NavGraph(
                 viewModel = chatViewModel,
                 chatId = chatId,
                 navController = navController
-
+            )
+        }
+        composable(Routes.EDIT) {
+            val editViewModel: EditViewModel = hiltViewModel()
+            EditScreen(
+                editViewModel,
+                navController
             )
         }
     }

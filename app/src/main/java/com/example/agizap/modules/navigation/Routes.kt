@@ -5,5 +5,6 @@ object Routes {
     const val HOME = "home"
     const val CHAT = "chat/{chatId}"
     const val REGISTER = "register"
+    const val EDIT = "edit"
 
 }

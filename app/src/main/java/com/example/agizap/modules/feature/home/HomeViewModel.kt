@@ -163,13 +163,23 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun filterUsers(): List<Chat>{
-        val list: List<Chat> = if (uiState.value.textField == "") chatsSortedByDate()
-        else {
-            chatsSortedByDate().filter{ getChatName(it, uiState.value.currentUser).contains(uiState.value.textField) }
+    fun filterUsers(): List<Chat> {
+        val currentUser = uiState.value.currentUser
+        val activeUsers = uiState.value.users.filter { it.active }.map { it.id }
+
+        val baseList = if (uiState.value.textField.isEmpty()) {
+            chatsSortedByDate()
+        } else {
+            chatsSortedByDate().filter {
+                getChatName(it, currentUser)
+                    .contains(uiState.value.textField, ignoreCase = true)
+            }
         }
 
-        return list.filter { uiState.value.currentUser.id in it.users }
+        return baseList.filter { chat ->
+            currentUser.id in chat.users &&
+                    chat.users.any { it != currentUser.id && it in activeUsers }
+        }
     }
 
     fun observeUsers() {
@@ -207,11 +217,6 @@ class HomeViewModel @Inject constructor(
             showPhoto = !uiState.value.showPhoto
         )
     }
-    fun onShowEditProfile(){
-        _uiState.value = uiState.value.copy(
-            showEditProfile = !uiState.value.showEditProfile
-        )
-    }
 
     fun setForPhoto(name: String, image: String, chatId: String){
         _uiState.value = uiState.value.copy(
@@ -226,11 +231,5 @@ class HomeViewModel @Inject constructor(
         onUpdate()
         observeUsers()
         observeChats()
-    }
-
-    fun onTextNameChange(value: String) {
-        _uiState.value = uiState.value.copy(
-
-        )
     }
 }

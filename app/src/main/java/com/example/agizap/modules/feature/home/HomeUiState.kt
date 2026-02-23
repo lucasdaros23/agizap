@@ -14,7 +14,4 @@ data class HomeUiState(
     val nameForPhoto: String = "",
     val imageForPhoto: String = "",
     val chatIdForPhoto: String = "",
-    val showEditProfile: Boolean = false,
-    val showEditName: Boolean =  false,
-    val showEditPhoto: Boolean =  false,
 )
