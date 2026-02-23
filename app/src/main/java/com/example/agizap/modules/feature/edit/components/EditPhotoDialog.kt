@@ -1,5 +1,6 @@
 package com.example.agizap.modules.feature.edit.components
 
+import android.hardware.camera2.params.BlackLevelPattern
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,17 +23,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.agizap.R
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.feature.edit.imagesList
 
 @Composable
 fun EditPhotoDialog(
+    url: String,
     confirmAction: () -> Unit,
     cancelAction: () -> Unit,
     onPhotoClick: (String) -> Unit,
-    checkSelected: (String) -> Boolean,
 ) {
     Alert(
         title = "Editar foto de perfil",
@@ -45,7 +52,7 @@ fun EditPhotoDialog(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(imagesList) {
@@ -54,22 +61,26 @@ fun EditPhotoDialog(
                     Box(
                         modifier = Modifier
                             .size(70.dp)
-                            .clip(CircleShape)
-                            .drawBehind {
-                                if (checkSelected(it)) {
-                                    drawCircle(
-                                        color = color,
-                                        radius = size.minDimension / 1f ,
-                                        center = center
-                                    )
-                                }
-                            }
+                            .clip(CircleShape),
+                        contentAlignment = Alignment.Center
                     ){
                         ImageEditPhoto(
                             it,
                             onClick = { onPhotoClick(it) },
                             modifier = Modifier.align(Alignment.Center)
                         )
+
+                        if (it == url) {
+                            Box(
+                                modifier = Modifier
+                                    .size(70.dp)
+                                    .border(
+                                        width = 2.dp,
+                                        color = color,
+                                        shape = CircleShape
+                                    )
+                            )
+                        }
                     }
                 }
             }
@@ -81,6 +92,20 @@ fun EditPhotoDialog(
 fun ImageEditPhoto(url: String, onClick: () -> Unit, modifier: Modifier) {
     ImageFromUrl(
         url,
-        modifier = modifier.size(70.dp).clip(CircleShape).clickable{ onClick() },
+        modifier = modifier
+            .size(70.dp)
+            .clip(CircleShape)
+            .clickable { onClick() },
     )
+}
+
+@Preview
+@Composable
+private fun BlackLevelPattern() {
+    EditPhotoDialog(
+        cancelAction = {},
+        confirmAction = {},
+        onPhotoClick = {},
+        url = ""
+        )
 }

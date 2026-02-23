@@ -162,7 +162,7 @@ fun EditScreen(
                             viewModel.onNewPhoto(user.photo)
                         },
                         onPhotoClick = { viewModel.onNewPhoto(it) },
-                        checkSelected = { viewModel.checkSelected(it) }
+                        url = uiState.newPhoto
                     )
                 }
             }

@@ -13,6 +13,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.agizap.R
 
 @Composable
 fun ImageComponent(id: Int) {
@@ -36,7 +37,6 @@ fun ImageFromUrl(url: String, modifier: Modifier) {
         AsyncImage(
             model = url,
             contentDescription = "Imagem",
-            modifier = modifier.size(300.dp),
             contentScale = ContentScale.Crop
         )
     }
