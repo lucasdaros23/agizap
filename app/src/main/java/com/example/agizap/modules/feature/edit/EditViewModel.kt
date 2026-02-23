@@ -32,8 +32,26 @@ class EditViewModel @Inject constructor(
         val user = PreferencesManager(context).getUser() ?: User()
         _uiState.value = uiState.value.copy(
             currentUser = user,
-            nameTextField = user.name
+            nameTextField = user.name,
+
         )
+    }
+
+    init{
+        observeUser()
+    }
+
+    private fun observeUser() {
+        val id = PreferencesManager(context).getUser()?.id ?: return
+        viewModelScope.launch {
+            userRepo.listenUser(id).collect { remoteUser ->
+                _uiState.value = _uiState.value.copy(
+                    currentUser = remoteUser,
+                    nameTextField = remoteUser.name
+                )
+                PreferencesManager(context).saveUser(remoteUser)
+            }
+        }
     }
 
     fun onTextNameChange(value: String) {

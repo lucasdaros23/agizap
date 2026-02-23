@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -49,6 +50,7 @@ fun EditPhotoDialog(
             ) {
                 items(imagesList) {
                     val color = MaterialTheme.colorScheme.primary
+
                     Box(
                         modifier = Modifier
                             .size(70.dp)
@@ -57,16 +59,17 @@ fun EditPhotoDialog(
                                 if (checkSelected(it)) {
                                     drawRoundRect(
                                         color = color,
-                                        cornerRadius = CornerRadius(50f, 50f)
+                                        cornerRadius = CornerRadius(35f, 35f)
                                     )
                                 }
                             }
-                    )
-                    ImageEditPhoto(
-                        it,
-                        onClick = { onPhotoClick(it) },
-                        modifier = Modifier
-                    )
+                    ){
+                        ImageEditPhoto(
+                            it,
+                            onClick = { onPhotoClick(it) },
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
             }
         }

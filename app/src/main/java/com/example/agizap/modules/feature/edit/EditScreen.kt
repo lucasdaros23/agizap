@@ -36,6 +36,7 @@ import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.feature.edit.components.EditNameDialog
 import com.example.agizap.modules.feature.edit.components.EditPhotoDialog
 import com.example.agizap.modules.feature.edit.components.EditTopBar
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 @SuppressLint("FlowOperatorInvokedInComposition")
@@ -45,7 +46,7 @@ fun EditScreen(
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val user by viewModel.uiState.map { it.currentUser }.collectAsState(initial = User())
+    val user = uiState.currentUser
     LaunchedEffect(Unit) {
         viewModel.updateUser()
     }

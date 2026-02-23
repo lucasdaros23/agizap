@@ -48,7 +48,6 @@ class UserRepository {
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-
                 val users = snapshot?.documents?.map { doc ->
                     User(
                         name = doc.getString("name").orEmpty(),
@@ -61,7 +60,18 @@ class UserRepository {
 
                 trySend(users)
             }
+        awaitClose { listener.remove() }
+    }
 
+    fun listenUser(userId: String): Flow<User> = callbackFlow {
+        val listener = Firebase.firestore
+            .collection("users")
+            .document(userId)
+            .addSnapshotListener { snap, e ->
+                if (e != null) return@addSnapshotListener
+                val user = snap?.toObject(User::class.java) ?: return@addSnapshotListener
+                trySend(user)
+            }
         awaitClose { listener.remove() }
     }
 }
