@@ -23,17 +23,17 @@ import javax.inject.Inject
 class EditViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userRepo: UserRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditUiState())
     val uiState = _uiState.asStateFlow()
-    private val auth = FirebaseAuth.getInstance()
 
     fun updateUser() {
         val user = PreferencesManager(context).getUser() ?: User()
         _uiState.value = uiState.value.copy(
             currentUser = user,
             nameTextField = user.name,
-
+            newPhoto = user.photo
         )
     }
 
@@ -62,7 +62,7 @@ class EditViewModel @Inject constructor(
 
     fun onNewPhoto(value: String) {
         _uiState.value = uiState.value.copy(
-            newPhoto = value
+            newPhoto = if (uiState.value.newPhoto == value) "" else value
         )
     }
 

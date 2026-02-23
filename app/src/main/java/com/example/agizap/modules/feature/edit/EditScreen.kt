@@ -47,6 +47,7 @@ fun EditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val user = uiState.currentUser
+    val photo = uiState.newPhoto
     LaunchedEffect(Unit) {
         viewModel.updateUser()
     }
@@ -160,12 +161,8 @@ fun EditScreen(
                             viewModel.onEditPhotoAlert()
                             viewModel.onNewPhoto(user.photo)
                         },
-                        onPhotoClick = {
-                            viewModel.onNewPhoto(it)
-                        },
-                        checkSelected = {
-                            viewModel.checkSelected(it)
-                        },
+                        onPhotoClick = { viewModel.onNewPhoto(it) },
+                        checkSelected = { viewModel.checkSelected(it) }
                     )
                 }
             }

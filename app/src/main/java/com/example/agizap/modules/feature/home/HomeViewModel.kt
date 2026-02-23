@@ -40,11 +40,11 @@ class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userRepo: UserRepository,
     private val chatRepo: ChatRepository,
-    private val messageRepo: MessageRepository
+    private val messageRepo: MessageRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
-    private val auth = FirebaseAuth.getInstance()
 
     init {
         onUpdate()

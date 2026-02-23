@@ -32,7 +32,7 @@ fun EditPhotoDialog(
     confirmAction: () -> Unit,
     cancelAction: () -> Unit,
     onPhotoClick: (String) -> Unit,
-    checkSelected: (String) -> Boolean
+    checkSelected: (String) -> Boolean,
 ) {
     Alert(
         title = "Editar foto de perfil",
@@ -42,11 +42,11 @@ fun EditPhotoDialog(
         cancelAction = { cancelAction() },
         content = {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(imagesList.size/3),
+                columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(imagesList) {
                     val color = MaterialTheme.colorScheme.primary
@@ -57,9 +57,10 @@ fun EditPhotoDialog(
                             .clip(CircleShape)
                             .drawBehind {
                                 if (checkSelected(it)) {
-                                    drawRoundRect(
+                                    drawCircle(
                                         color = color,
-                                        cornerRadius = CornerRadius(35f, 35f)
+                                        radius = size.minDimension / 1f ,
+                                        center = center
                                     )
                                 }
                             }
