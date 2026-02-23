@@ -20,6 +20,7 @@ import com.example.agizap.modules.navigation.Routes
 import com.example.agizap.modules.repositories.MessageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -163,22 +164,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun filterUsers(): List<Chat> {
-        val currentUser = uiState.value.currentUser
-        val activeUsers = uiState.value.users.filter { it.active }.map { it.id }
+    fun filterUsers(): Flow<List<Chat>> {
+        return uiState.map { state ->
+            val currentUser = state.currentUser
+            val activeUsers = state.users.filter { it.active }.map { it.id }
 
-        val baseList = if (uiState.value.textField.isEmpty()) {
-            chatsSortedByDate()
-        } else {
-            chatsSortedByDate().filter {
-                getChatName(it, currentUser)
-                    .contains(uiState.value.textField, ignoreCase = true)
+            val baseList = if (state.textField.isEmpty()) {
+                state.chats.sortedByDescending { it.messages.lastOrNull()?.time ?: 0L }
+            } else {
+                state.chats.filter {
+                    getChatName(it, currentUser)
+                        .contains(state.textField, ignoreCase = true)
+                }.sortedByDescending { it.messages.lastOrNull()?.time ?: 0L }
             }
-        }
 
-        return baseList.filter { chat ->
-            currentUser.id in chat.users &&
-                    chat.users.any { it != currentUser.id && it in activeUsers }
+            baseList.filter { chat ->
+                currentUser.id in chat.users &&
+                        chat.users.any { it != currentUser.id && it in activeUsers }
+            }
         }
     }
 

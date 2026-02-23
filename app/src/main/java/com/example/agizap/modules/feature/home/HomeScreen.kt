@@ -12,7 +12,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -43,6 +46,7 @@ fun HomeScreen(
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val chats by viewModel.filterUsers().collectAsState(initial = emptyList())
     Scaffold(
         topBar = {
             TopBarHome(
@@ -70,7 +74,7 @@ fun HomeScreen(
                     },
                 )
                 LazyColumn() {
-                    items(viewModel.filterUsers()) {
+                    items(chats) {
                         val name = viewModel.getChatName(it, uiState.currentUser)
                         val photo = viewModel.getChatPhoto(it, uiState.currentUser)
                         ChatCard(
@@ -114,16 +118,14 @@ fun HomeScreen(
             if (uiState.showAlert) {
                 Alert(
                     title = "Essa função ainda não foi implementada",
-                    "",
-                    "OK",
-                    "",
-                    { viewModel.onShowAlert() },
+                    confirmText = "OK",
+                    confirmAction = { viewModel.onShowAlert() },
+                    cancelAction = { viewModel.onShowAlert() }
                 )
             }
             if (uiState.showAddChat) {
                 AddChatDialog(
                     uiState.users.filter { it.id != uiState.currentUser.id && it.active },
-                    onClick = { viewModel.onShowAddChat() },
                     onItemClick = {
                         var chatId = viewModel.checkChatExists(listOf(uiState.currentUser.id, it.id))
                         if (chatId == "") {
@@ -131,7 +133,8 @@ fun HomeScreen(
                         }
                         navController.navigate("chat/${chatId}")
                         viewModel.onShowAddChat()
-                    }
+                    },
+                    cancelAction = { viewModel.onShowAddChat() }
                 )
             }
             if (uiState.showPhoto){

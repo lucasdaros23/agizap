@@ -1,5 +1,6 @@
 package com.example.agizap.modules.feature.edit
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,15 +34,18 @@ import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.feature.edit.components.EditNameDialog
+import com.example.agizap.modules.feature.edit.components.EditPhotoDialog
 import com.example.agizap.modules.feature.edit.components.EditTopBar
-import com.example.agizap.modules.feature.register.components.ReturnButton
+import kotlinx.coroutines.flow.map
 
+@SuppressLint("FlowOperatorInvokedInComposition")
 @Composable
 fun EditScreen(
     viewModel: EditViewModel,
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val user by viewModel.uiState.map { it.currentUser }.collectAsState(initial = User())
     LaunchedEffect(Unit) {
         viewModel.updateUser()
     }
@@ -66,7 +71,7 @@ fun EditScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     ImageFromUrl(
-                        uiState.currentUser.photo,
+                        user.photo,
                         modifier = Modifier
                             .size(200.dp)
                             .clickable {}
@@ -99,7 +104,7 @@ fun EditScreen(
                     Column() {
                         Text("Nome", fontSize = 20.sp, color = MaterialTheme.colorScheme.tertiary)
                         Text(
-                            uiState.currentUser.name,
+                            user.name,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onTertiary
                         )
@@ -127,10 +132,10 @@ fun EditScreen(
                             viewModel.onShowDeleteAlert()
                             viewModel.logout(navController)
                         },
-                        cancelAction = { viewModel.onShowDeleteAlert() }
+                        cancelAction = { viewModel.onShowDeleteAlert() },
                     )
                 }
-                if (uiState.showEditName){
+                if (uiState.showEditName) {
                     EditNameDialog(
                         value = uiState.nameTextField,
                         onValueChange = { viewModel.onTextNameChange(it) },
@@ -140,8 +145,26 @@ fun EditScreen(
                         },
                         cancelAction = {
                             viewModel.onEditNameAlert()
-                            viewModel.onTextNameChange(uiState.currentUser.name)
+                            viewModel.onTextNameChange(user.name)
                         }
+                    )
+                }
+                if (uiState.showEditPhoto) {
+                    EditPhotoDialog(
+                        confirmAction = {
+                            viewModel.editUser("", uiState.newPhoto, true)
+                            viewModel.onEditPhotoAlert()
+                        },
+                        cancelAction = {
+                            viewModel.onEditPhotoAlert()
+                            viewModel.onNewPhoto(user.photo)
+                        },
+                        onPhotoClick = {
+                            viewModel.onNewPhoto(it)
+                        },
+                        checkSelected = {
+                            viewModel.checkSelected(it)
+                        },
                     )
                 }
             }

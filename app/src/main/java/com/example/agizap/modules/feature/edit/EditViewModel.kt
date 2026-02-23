@@ -5,11 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.agizap.model.User
-import com.example.agizap.modules.feature.home.HomeUiState
 import com.example.agizap.modules.navigation.Routes
 import com.example.agizap.modules.preferences.PreferencesManager
-import com.example.agizap.modules.repositories.ChatRepository
-import com.example.agizap.modules.repositories.MessageRepository
 import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -31,7 +28,7 @@ class EditViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
     private val auth = FirebaseAuth.getInstance()
 
-    fun updateUser(){
+    fun updateUser() {
         val user = PreferencesManager(context).getUser() ?: User()
         _uiState.value = uiState.value.copy(
             currentUser = user,
@@ -44,24 +41,37 @@ class EditViewModel @Inject constructor(
             nameTextField = value
         )
     }
-    fun onEditNameAlert(){
+
+    fun onNewPhoto(value: String) {
+        _uiState.value = uiState.value.copy(
+            newPhoto = value
+        )
+    }
+
+    fun onEditNameAlert() {
         _uiState.value = uiState.value.copy(
             showEditName = !uiState.value.showEditName
         )
     }
-    fun onEditPhotoAlert(){
+
+    fun onEditPhotoAlert() {
         _uiState.value = uiState.value.copy(
             showEditPhoto = !uiState.value.showEditPhoto
         )
     }
-    fun onShowDeleteAlert(){
+
+    fun onShowDeleteAlert() {
         _uiState.value = uiState.value.copy(
             showDeleteAlert = !uiState.value.showDeleteAlert
         )
     }
 
-    fun onBackButton(action: () -> Unit){
-        if (uiState.value.backEnabled){
+    fun checkSelected(url: String): Boolean {
+        return (url == uiState.value.newPhoto)
+    }
+
+    fun onBackButton(action: () -> Unit) {
+        if (uiState.value.backEnabled) {
             _uiState.value = uiState.value.copy(
                 backEnabled = false
             )
@@ -75,19 +85,19 @@ class EditViewModel @Inject constructor(
         }
     }
 
-    fun editUser(name:String, photo: String, active: Boolean){
+    fun editUser(name: String, photo: String, active: Boolean) {
         val db = Firebase.firestore
         val docRef = db.collection("users").document(uiState.value.currentUser.id)
         var user = uiState.value.currentUser
-        if (name != ""){
+        if (name != "") {
             docRef.update("name", name)
             user = user.copy(name = name)
         }
-        if (photo != ""){
+        if (photo != "") {
             docRef.update("photo", photo)
             user = user.copy(photo = photo)
         }
-        if (!active){
+        if (!active) {
             docRef.update("active", false)
             user = user.copy(active = false)
         }

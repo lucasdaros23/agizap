@@ -29,10 +29,10 @@ fun Alert(
     cancelText: String = "",
     confirmAction: () -> Unit = {},
     cancelAction: () -> Unit = {},
-    content: @Composable () -> Unit = {}
+    content: @Composable () -> Unit = {},
 ) {
     AlertDialog(
-        onDismissRequest = {  },
+        onDismissRequest = { cancelAction() },
     ) {
         Surface(
             color = MaterialTheme.colorScheme.background,

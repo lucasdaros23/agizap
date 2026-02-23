@@ -8,5 +8,6 @@ data class EditUiState(
     val showEditPhoto: Boolean = false,
     val showDeleteAlert: Boolean = false,
     val nameTextField: String = "",
-    val backEnabled: Boolean = true
+    val backEnabled: Boolean = true,
+    val newPhoto: String = ""
 )

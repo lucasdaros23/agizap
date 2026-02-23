@@ -141,10 +141,9 @@ fun ChatScreen(
         if (uiState.showAlert) {
             Alert(
                 title = "Essa função ainda não foi implementada",
-                "",
-                "OK",
-                "",
-                { viewModel.onShowAlert() },
+                confirmText = "OK",
+                confirmAction = { viewModel.onShowAlert() },
+                cancelAction = { viewModel.onShowAlert() }
             )
         }
         if (uiState.showPhoto) {
