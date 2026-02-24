@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agizap.R
@@ -54,9 +55,10 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
                     SeenIcon(modifier = Modifier.size(24.dp))
                 }
                 Text(
-                    text = if (text.length < 17) text
-                    else text.take(15) + "..."
-                        , color = MaterialTheme.colorScheme.onTertiary
+                    text = text.replace(Regex("[\r\n]+"), " "),
+                    color = MaterialTheme.colorScheme.onTertiary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

@@ -28,7 +28,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val messageRepo: MessageRepository,
     private val chatRepo: ChatRepository,
     private val userRepo: UserRepository,

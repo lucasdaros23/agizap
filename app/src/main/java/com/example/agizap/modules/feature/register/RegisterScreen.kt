@@ -73,7 +73,7 @@ fun RegisterScreen(
                         uistate.password.trim() != "" &&
                         uistate.username.trim() != ""
                     ) {
-                        viewModel.register(context, email = uistate.email, password = uistate.password)
+                        viewModel.register(email = uistate.email, password = uistate.password)
                     } else {
                         viewModel.onChangeMessage("Preencha todos os campos corretamente")
                         viewModel.onShowAlert()

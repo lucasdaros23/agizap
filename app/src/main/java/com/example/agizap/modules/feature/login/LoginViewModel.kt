@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(
         loadUsers()
     }
 
-    fun login(context: Context, email: String, password: String) {
+    fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val user = uiState.value.users.find { it.id == result.user?.uid }
@@ -44,12 +44,11 @@ class LoginViewModel @Inject constructor(
                         val prefs = prefs
 
                         prefs.saveUser(user)
+                    } else {
+                        _uiState.value = uiState.value.copy(
+                            message = "Erro ao realizar login, usuário desativado",
+                        )
                     }
-                }
-                else {
-                    _uiState.value = uiState.value.copy(
-                        message = "Erro ao realizar login, usuário desativado",
-                    )
                 }
                 onShowAlert()
             }
@@ -63,6 +62,15 @@ class LoginViewModel @Inject constructor(
                 onChangeMessage(msg)
                 onShowAlert()
             }
+    }
+
+
+    fun observeUsers() {
+        viewModelScope.launch {
+            userRepo.listenUsers().collect {
+                _uiState.value = _uiState.value.copy(users = it)
+            }
+        }
     }
 
     fun loadUsers() {

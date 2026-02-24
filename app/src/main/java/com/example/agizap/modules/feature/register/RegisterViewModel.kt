@@ -64,7 +64,7 @@ class RegisterViewModel @Inject constructor(
         _uiState.value = uiState.value.copy(buttonEnabled = !uiState.value.buttonEnabled)
     }
 
-    fun register(context: Context, email: String, password: String) {
+    fun register(email: String, password: String) {
         viewModelScope.launch {
             try {
                 val result = auth.createUserWithEmailAndPassword(email, password).await()

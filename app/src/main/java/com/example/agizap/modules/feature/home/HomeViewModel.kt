@@ -37,7 +37,6 @@ import kotlin.collections.toList
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val userRepo: UserRepository,
     private val chatRepo: ChatRepository,
     private val messageRepo: MessageRepository,
@@ -71,9 +70,6 @@ class HomeViewModel @Inject constructor(
             textField = value
         )
     }
-
-    fun chatsSortedByDate() =
-        uiState.value.chats.sortedByDescending { it.messages.lastOrNull()?.time ?: 0L }
 
     fun onShowAlert() {
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
@@ -124,9 +120,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-    fun findUserById(id: String) = uiState.value.users.find { it.id == id } ?: User()
-
 
     fun onShowAddChat() {
         viewModelScope.launch {
