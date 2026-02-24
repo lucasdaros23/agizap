@@ -32,6 +32,7 @@ class ChatViewModel @Inject constructor(
     private val messageRepo: MessageRepository,
     private val chatRepo: ChatRepository,
     private val userRepo: UserRepository,
+    private val prefs: PreferencesManager
 ) : ViewModel(){
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState = _uiState.asStateFlow()
@@ -40,7 +41,7 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             val users = userRepo.getUsers()
             val chats = chatRepo.getChats()
-            val currentUser = PreferencesManager(context).getUser()
+            val currentUser = prefs.getUser()
             val currentChat = chats.find { it.id == chatId }
 
             if (users.isNotEmpty()) _uiState.value = uiState.value.copy(users = users)

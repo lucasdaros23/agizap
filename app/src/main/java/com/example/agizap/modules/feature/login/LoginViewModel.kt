@@ -20,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepo: UserRepository,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val prefs: PreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -34,13 +35,13 @@ class LoginViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val user = uiState.value.users.find { it.id == result.user?.uid }
-                    if (user != null) {
-                        if (user.active) {
-                            _uiState.value = uiState.value.copy(
-                                message = "Login realizado com sucesso",
-                                success = true
-                            )
-                        val prefs = PreferencesManager(context)
+                if (user != null) {
+                    if (user.active) {
+                        _uiState.value = uiState.value.copy(
+                            message = "Login realizado com sucesso",
+                            success = true
+                        )
+                        val prefs = prefs
 
                         prefs.saveUser(user)
                     }

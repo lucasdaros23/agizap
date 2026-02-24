@@ -75,7 +75,7 @@ fun EditPhotoDialog(
                                 modifier = Modifier
                                     .size(70.dp)
                                     .border(
-                                        width = 2.dp,
+                                        width = 3.dp,
                                         color = color,
                                         shape = CircleShape
                                     )
