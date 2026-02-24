@@ -61,7 +61,7 @@ class EditViewModel @Inject constructor(
 
     fun onNewPhoto(value: String) {
         _uiState.value = uiState.value.copy(
-            newPhoto = if (uiState.value.newPhoto == value) "" else value
+            newPhoto = value
         )
     }
 

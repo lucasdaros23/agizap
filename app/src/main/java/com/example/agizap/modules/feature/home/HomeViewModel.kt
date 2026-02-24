@@ -180,8 +180,7 @@ class HomeViewModel @Inject constructor(
             }
 
             baseList.filter { chat ->
-                currentUser.id in chat.users &&
-                        chat.users.any { it != currentUser.id && it in activeUsers }
+                currentUser.id in chat.users && chat.messages.isNotEmpty() && chat.users.any { it != currentUser.id && it in activeUsers }
             }
         }
     }
