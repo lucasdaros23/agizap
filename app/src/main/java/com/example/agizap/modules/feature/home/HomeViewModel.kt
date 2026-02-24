@@ -41,7 +41,8 @@ class HomeViewModel @Inject constructor(
     private val userRepo: UserRepository,
     private val chatRepo: ChatRepository,
     private val messageRepo: MessageRepository,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val prefs: PreferencesManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
@@ -55,7 +56,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val chatsList = chatRepo.getChats()
             val users = userRepo.getUsers()
-            val currentUser = PreferencesManager(context).getUser()
+            val currentUser = prefs.getUser()
             val currentUserChats = chatsList.filter { currentUser?.id in it.users }
 
             if (users.isNotEmpty()) _uiState.value = uiState.value.copy(users = users)
@@ -158,7 +159,7 @@ class HomeViewModel @Inject constructor(
 
     fun logout(navController: NavHostController) {
         auth.signOut()
-        PreferencesManager(context).clear()
+        prefs.clear()
         navController.navigate(Routes.LOGIN) {
             popUpTo(Routes.HOME) { inclusive = true }
         }

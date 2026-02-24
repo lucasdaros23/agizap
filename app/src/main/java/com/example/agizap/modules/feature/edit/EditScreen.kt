@@ -33,6 +33,7 @@ import com.example.agizap.R
 import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ImageFromUrl
+import com.example.agizap.modules.feature.edit.components.DropDownTheme
 import com.example.agizap.modules.feature.edit.components.EditNameDialog
 import com.example.agizap.modules.feature.edit.components.EditPhotoDialog
 import com.example.agizap.modules.feature.edit.components.EditTopBar
@@ -48,6 +49,8 @@ fun EditScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val user = uiState.currentUser
     val photo = uiState.newPhoto
+    val theme by viewModel.theme.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.updateUser()
     }
@@ -112,6 +115,12 @@ fun EditScreen(
                         )
                     }
                 }
+
+                DropDownTheme(
+                    setPreference = { viewModel.setPreference(it) },
+                    getPreference = { theme }
+                )
+
                 Spacer(Modifier.size(10.dp))
                 TextButton(
                     onClick = { viewModel.onShowDeleteAlert() },

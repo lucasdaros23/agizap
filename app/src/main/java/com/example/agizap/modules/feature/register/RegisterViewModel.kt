@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val userRepo: UserRepository,
-
+    private val prefs: PreferencesManager
     ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState = _uiState.asStateFlow()
@@ -87,7 +87,7 @@ class RegisterViewModel @Inject constructor(
                     .set(userData)
                     .await()
 
-                PreferencesManager(context).saveUser(userData)
+                prefs.saveUser(userData)
 
             } catch (e: Exception) {
                 val message = when (e) {

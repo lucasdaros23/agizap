@@ -1,6 +1,5 @@
 package com.example.agizap.modules.feature.edit
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -12,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,15 +19,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val userRepo: UserRepository,
-    private val auth: FirebaseAuth
-) : ViewModel() {
+    private val auth: FirebaseAuth,
+    private val prefs: PreferencesManager,
+
+    ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _theme = MutableStateFlow(prefs.getTheme() ?: "Automático")
+    val theme = _theme.asStateFlow()
     fun updateUser() {
-        val user = PreferencesManager(context).getUser() ?: User()
+        val user = prefs.getUser() ?: User()
         _uiState.value = uiState.value.copy(
             currentUser = user,
             nameTextField = user.name,
@@ -42,14 +43,14 @@ class EditViewModel @Inject constructor(
     }
 
     private fun observeUser() {
-        val id = PreferencesManager(context).getUser()?.id ?: return
+        val id = prefs.getUser()?.id ?: return
         viewModelScope.launch {
             userRepo.listenUser(id).collect { remoteUser ->
                 _uiState.value = _uiState.value.copy(
                     currentUser = remoteUser,
                     nameTextField = remoteUser.name
                 )
-                PreferencesManager(context).saveUser(remoteUser)
+                prefs.saveUser(remoteUser)
             }
         }
     }
@@ -119,15 +120,22 @@ class EditViewModel @Inject constructor(
             docRef.update("active", false)
             user = user.copy(active = false)
         }
-        PreferencesManager(context).saveUser(user)
+        prefs.saveUser(user)
     }
 
     fun logout(navController: NavHostController) {
         auth.signOut()
-        PreferencesManager(context).clear()
+        prefs.clear()
         navController.navigate(Routes.LOGIN) {
             popUpTo(Routes.HOME) { inclusive = true }
             popUpTo(Routes.EDIT) { inclusive = true }
         }
     }
+
+    fun setPreference(value: String){
+        prefs.saveTheme(value)
+        _theme.value = value
+    }
+
+    fun getPreference() = theme.value
 }

@@ -16,7 +16,7 @@ import com.example.agizap.modules.feature.register.components.ReturnButton
 @Composable
 fun EditTopBar(onReturn: () -> Unit) {
     TopAppBar(
-        title = { Text("Perfil", fontSize = 28.sp) },
+        title = { Text("Configurações", fontSize = 28.sp) },
         navigationIcon = { ReturnButton({ onReturn() }) },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background

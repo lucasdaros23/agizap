@@ -5,10 +5,7 @@ import android.content.SharedPreferences
 import com.example.agizap.model.User
 import com.google.gson.Gson
 
-class PreferencesManager(context: Context) {
-
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+class PreferencesManager(private val prefs: SharedPreferences) {
 
     private val gson = Gson()
 
@@ -25,19 +22,14 @@ class PreferencesManager(context: Context) {
         return gson.fromJson(json, User::class.java)
     }
 
-    fun saveUserData(uid: String, email: String) {
-        prefs.edit()
-            .putString("uid", uid)
-            .putString("email", email)
-            .putBoolean("logged_in", true)
-            .apply()
+    fun saveTheme(value: String){
+        prefs.edit().putString("theme", value).apply()
     }
 
-    fun getUid(): String? = prefs.getString("uid", null)
-    fun getEmail(): String? = prefs.getString("email", null)
+    fun getTheme() = prefs.getString("theme", null)
     fun isLoggedIn(): Boolean = prefs.getBoolean("logged_in", false)
 
     fun clear() {
-        prefs.edit().clear().apply()
+        prefs.edit().remove("logged_in").remove("user").apply()
     }
 }
