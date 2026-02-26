@@ -66,10 +66,6 @@ class ChatViewModel @Inject constructor(
 
     fun checkSent(user: User, message: Message) = (user.id == message.userId)
 
-    fun getChatName(chat: Chat) = if (chat.users.size == 2){
-        chat.users.find { it == uiState.value.currentUser.id } ?: ""
-    } else chat.name
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertTime(time: Long) = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
 

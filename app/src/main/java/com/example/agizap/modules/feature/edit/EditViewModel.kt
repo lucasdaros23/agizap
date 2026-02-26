@@ -129,4 +129,13 @@ class EditViewModel @Inject constructor(
             popUpTo(Routes.EDIT) { inclusive = true }
         }
     }
+
+    fun onClickDelete(navController: NavHostController){
+        viewModelScope.launch {
+            editUser("", "", false)
+            delay(1000L)
+            onShowDeleteAlert()
+            logout(navController)
+        }
+    }
 }

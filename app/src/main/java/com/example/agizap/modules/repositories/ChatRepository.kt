@@ -43,7 +43,7 @@ class ChatRepository {
                 val chatId = doc.id
                 val messagesSnapshot = doc.reference
                     .collection("messages")
-                    .orderBy("time") // ordena por data
+                    .orderBy("time")
                     .get()
                     .await()
 

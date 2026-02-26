@@ -130,9 +130,7 @@ fun EditScreen(
                         confirmText = "Desativar",
                         cancelText = "Cancelar",
                         confirmAction = {
-                            viewModel.editUser("", "", false)
-                            viewModel.onShowDeleteAlert()
-                            viewModel.logout(navController)
+                            viewModel.onClickDelete(navController)
                         },
                         cancelAction = { viewModel.onShowDeleteAlert() },
                     )
