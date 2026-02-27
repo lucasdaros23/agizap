@@ -228,4 +228,8 @@ class HomeViewModel @Inject constructor(
         observeUsers()
         observeChats()
     }
+
+    fun checkSelected(users: Set<String>, user: User) = users.find { it == user.id } != null
+
+    fun onCheckedClick(checked: Boolean, selectedIds: Set<String>, user: User) = if (checked) selectedIds - user.id else selectedIds + user.id
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,7 +108,7 @@ fun HomeScreen(
                     .padding(30.dp),
                 onClick = {
                     viewModel.onShowAddChat()
-                }
+                },
             )
 
 
@@ -120,22 +121,43 @@ fun HomeScreen(
                 )
             }
             if (uiState.showAddChat) {
+                val users = uiState.users.filter { it.id != uiState.currentUser.id && it.active }
                 AddChatDialog(
-                    uiState.users.filter { it.id != uiState.currentUser.id && it.active },
-                    onItemClick = {
-                        var chatId = viewModel.checkChatExists(listOf(uiState.currentUser.id, it.id))
+                    users,
+                    onItemClick = { selectedIds ->
+                        var chatId =
+                            if (selectedIds.size == 1) {
+                                viewModel.checkChatExists(
+                                    listOf(
+                                        uiState.currentUser.id,
+                                        selectedIds.firstOrNull()?:"")
+                                )
+                            } else {
+                                val allUsers = (selectedIds + uiState.currentUser.id).toList()
+                                viewModel.addChat(allUsers)
+                            }
+
                         if (chatId == "") {
-                            chatId = viewModel.addChat(listOf(uiState.currentUser.id, it.id))
+                            chatId = viewModel.addChat(
+                                listOf(
+                                    uiState.currentUser.id,
+                                    selectedIds.find { true } ?: ""))
                         }
                         navController.navigate("chat/${chatId}")
                         viewModel.onShowAddChat()
                     },
-                    cancelAction = { viewModel.onShowAddChat() }
+                    cancelAction = { viewModel.onShowAddChat() },
+                    checkSelected = { selectedIds, user ->
+                        viewModel.checkSelected(selectedIds, user)
+                    },
+                    onCheckedClick = { checked, selectedIds, user ->
+                        viewModel.onCheckedClick(checked, selectedIds, user)
+                    }
                 )
             }
-            if (uiState.showPhoto){
+            if (uiState.showPhoto) {
                 UserProfilePicture(
-                    name = uiState.nameForPhoto ,
+                    name = uiState.nameForPhoto,
                     photo = uiState.imageForPhoto,
                     onQuit = { viewModel.onShowPhoto() },
                     onShowAlert = { viewModel.onShowAlert() },

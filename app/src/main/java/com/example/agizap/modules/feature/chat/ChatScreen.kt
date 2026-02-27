@@ -64,7 +64,7 @@ fun ChatScreen(
                     onClickOther = { viewModel.onShowAlert() },
                     user = otherUser,
                     chat = uiState.chat,
-                    isGroup = (uiState.users.size > 2),
+                    isGroup = (uiState.chat.users.size > 2),
                     onClickPhoto = { viewModel.onShowPhoto() },
                     anySelected = anySelected,
                     onClickDelete = { viewModel.onShowDelete() },
