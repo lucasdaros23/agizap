@@ -35,13 +35,14 @@ import com.example.agizap.model.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfilePicture( // MUDAR PRA SER UM DIALOG EM VEZ DO BOX
+fun UserProfilePicture(
     name: String,
     photo: String,
     onQuit: () -> Unit,
     onClickChat: () -> Unit,
     onShowAlert: () -> Unit,
-    onHome: Boolean
+    onHome: Boolean,
+    onClickInfo: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = { onQuit() },
@@ -94,6 +95,11 @@ fun UserProfilePicture( // MUDAR PRA SER UM DIALOG EM VEZ DO BOX
                             painter = painterResource(R.drawable.ligarvideo),
                             onClick = { onShowAlert() },
                             size = 30
+                        )
+                        IconButtonComponent(
+                            painter = painterResource(R.drawable.info),
+                            onClick = { onClickInfo() },
+                            size = 25
                         )
                     }
                 }

@@ -82,11 +82,6 @@ class EditViewModel @Inject constructor(
             showDeleteAlert = !uiState.value.showDeleteAlert
         )
     }
-
-    fun checkSelected(url: String): Boolean {
-        return (url == uiState.value.newPhoto)
-    }
-
     fun onBackButton(action: () -> Unit) {
         if (uiState.value.backEnabled) {
             _uiState.value = uiState.value.copy(

@@ -95,6 +95,7 @@ fun HomeScreen(
                                     image = photo,
                                     chatId = it.id
                                 )
+                                viewModel.changeChatInfo(it.id)
                                 viewModel.onShowPhoto()
                             },
                             isGroup = it.users.size > 2,
@@ -167,7 +168,8 @@ fun HomeScreen(
                         navController.navigate("chat/${uiState.chatIdForPhoto}")
                         viewModel.onShowPhoto()
                     },
-                    onHome = true
+                    onHome = true,
+                    onClickInfo = {  }
                 )
             }
         }

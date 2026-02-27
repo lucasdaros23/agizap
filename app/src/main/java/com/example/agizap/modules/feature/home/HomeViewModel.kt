@@ -13,17 +13,13 @@ import com.example.agizap.model.User
 import com.example.agizap.modules.preferences.PreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import android.content.Context
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.agizap.modules.navigation.Routes
 import com.example.agizap.modules.repositories.MessageRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -234,4 +230,10 @@ class HomeViewModel @Inject constructor(
     fun onCheckedClick(checked: Boolean, selectedIds: Set<String>, user: User) = if (checked) selectedIds - user.id else selectedIds + user.id
 
     fun getUserName(id: String) = uiState.value.users.find { it.id == id }?.name ?: ""
+
+    fun changeChatInfo(id: String){
+        _uiState.value = uiState.value.copy(
+            chatInfoId = id
+        )
+    }
 }

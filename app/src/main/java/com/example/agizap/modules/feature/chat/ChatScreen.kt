@@ -168,7 +168,8 @@ fun ChatScreen(
                 onQuit = { viewModel.onShowPhoto() },
                 onShowAlert = { viewModel.onShowAlert() },
                 onClickChat = {},
-                onHome = false
+                onHome = false,
+                onClickInfo = { navController.navigate("info/$chatId") }
             )
         }
         if (uiState.showDeleteAlert){
