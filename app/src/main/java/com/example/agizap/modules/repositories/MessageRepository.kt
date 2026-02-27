@@ -78,6 +78,7 @@ class MessageRepository {
                         text = doc.getString("text").orEmpty(),
                         userId = doc.getString("userId").orEmpty(),
                         time = doc.getLong("time") ?: 0L,
+                        deleted = doc.getBoolean("deleted") ?: false,
                         id = doc.id
                     )
                 }?.sortedBy { it.time } ?: emptyList()
@@ -86,5 +87,33 @@ class MessageRepository {
             }
 
         awaitClose { listener.remove() }
+    }
+
+    fun deleteMessage(chatId: String, messageId: String) {
+        val docRef =
+            db.collection("chats")
+                .document(chatId)
+                .collection("messages")
+                .document(messageId)
+        docRef.update("deleted", true)
+    }
+
+    fun putDeletedField() {
+        val db = Firebase.firestore
+        db.collection("chats")
+            .get()
+            .addOnSuccessListener { chatSnapshot ->
+                for (chatDoc in chatSnapshot.documents) {
+                    chatDoc.reference.collection("messages")
+                        .get()
+                        .addOnSuccessListener { messageSnapshot ->
+                            for (messageDoc in messageSnapshot.documents) {
+                                if (messageDoc.getBoolean("deleted") == null) {
+                                    messageDoc.reference.update("deleted", false)
+                                }
+                            }
+                        }
+                }
+            }
     }
 }

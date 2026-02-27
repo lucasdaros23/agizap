@@ -29,7 +29,10 @@ fun ChatTopBar(
     onClickOther: () -> Unit,
     chat: Chat, user: User,
     isGroup: Boolean,
-    onClickPhoto: () -> Unit
+    onClickPhoto: () -> Unit,
+    anySelected: Boolean,
+    onClickDelete: () -> Unit,
+    selected: Int,
 ) {
     TopAppBar(
         navigationIcon = {
@@ -42,34 +45,47 @@ fun ChatTopBar(
             )
         },
         title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                ImageFromUrl(
-                    if (isGroup) user.photo else chat.photo,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .clickable{ onClickPhoto() }
-                )
-                Spacer(modifier = Modifier.size(15.dp))
-                Text(if (isGroup) user.name else chat.name)
+            if (anySelected){
+                Text(selected.toString())
             }
-        },
+            else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    ImageFromUrl(
+                        if (isGroup) user.photo else chat.photo,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .clickable { onClickPhoto() }
+                    )
+                    Spacer(modifier = Modifier.size(15.dp))
+                    Text(if (isGroup) user.name else chat.name)
+                }
+            }        },
         actions = {
-            IconButtonComponent(
-                painter = painterResource(R.drawable.ligar),
-                onClick = { onClickOther() },
-                size = 30
-            )
-            IconButtonComponent(
-                painter = painterResource(R.drawable.ligarvideo),
-                onClick = { onClickOther() },
-                size = 40
-            )
-            IconButtonComponent(
-                painter = painterResource(R.drawable.opcoes),
-                onClick = { onClickOther() },
-                size = 25
-            )
+            if (anySelected){
+                IconButtonComponent(
+                    painter = painterResource(R.drawable.delete),
+                    onClick = { onClickDelete() },
+                    size = 30
+                )
+            }
+            else {
+                IconButtonComponent(
+                    painter = painterResource(R.drawable.ligar),
+                    onClick = { onClickOther() },
+                    size = 30
+                )
+                IconButtonComponent(
+                    painter = painterResource(R.drawable.ligarvideo),
+                    onClick = { onClickOther() },
+                    size = 40
+                )
+                IconButtonComponent(
+                    painter = painterResource(R.drawable.opcoes),
+                    onClick = { onClickOther() },
+                    size = 25
+                )
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

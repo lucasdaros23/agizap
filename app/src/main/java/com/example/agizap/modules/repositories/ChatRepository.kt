@@ -52,6 +52,7 @@ class ChatRepository {
                         text = messageDoc.getString("text") ?: "",
                         userId = messageDoc.getString("userId") ?: "",
                         time = messageDoc.getLong("time") ?: 0L,
+                        deleted = doc.getBoolean("deleted") ?: false,
                         id = messageDoc.id
                     )
                 }

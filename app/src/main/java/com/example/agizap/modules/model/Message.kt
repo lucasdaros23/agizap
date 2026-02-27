@@ -6,4 +6,5 @@ data class Message(
     val userId: String = "",
     val time: Long = System.currentTimeMillis(),
     val id: String = "",
+    val deleted: Boolean = false,
 )

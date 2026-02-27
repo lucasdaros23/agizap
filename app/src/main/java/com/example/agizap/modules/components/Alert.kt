@@ -53,6 +53,7 @@ fun Alert(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
+                Spacer(Modifier.size(10.dp))
                 content()
                 Row(
                     modifier = Modifier.fillMaxWidth(),

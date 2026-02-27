@@ -14,4 +14,5 @@ data class ChatUiState(
     val chats: List<Chat> = emptyList(),
     val backEnabled: Boolean = true,
     val showPhoto: Boolean = false,
+    val showDeleteAlert: Boolean = false,
 )

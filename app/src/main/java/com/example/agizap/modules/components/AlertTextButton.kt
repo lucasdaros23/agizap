@@ -10,6 +10,10 @@ fun AlertTextButton(text: String, onClick: () -> Unit) {
     TextButton(
         onClick = { onClick() }
     ) {
-        Text(text, color = MaterialTheme.colorScheme.primary)
+        Text(
+            text,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleSmall
+        )
     }
 }

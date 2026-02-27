@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agizap.R
 import com.example.agizap.model.Chat
+import com.example.agizap.model.Message
 import com.example.agizap.modules.components.ImageComponent
 import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.components.SeenIcon
@@ -34,7 +35,7 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
             .padding(15.dp)
     ){
         val mensagens = chat.messages
-        val lastMessage = mensagens.lastOrNull()
+        val lastMessage = mensagens.lastOrNull() ?: Message()
         ImageFromUrl(photo, Modifier
             .size(50.dp)
             .clip(CircleShape)
@@ -50,12 +51,12 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
                 )
             }
             Row(){
-                val text = lastMessage?.text ?: ""
-                if (checkSent){
+                val text = lastMessage.text
+                if (checkSent && !lastMessage.deleted){
                     SeenIcon(modifier = Modifier.size(24.dp))
                 }
                 Text(
-                    text = text.replace(Regex("[\r\n]+"), " "),
+                    text = if (lastMessage.deleted) "\uD83D\uDEAB Mensagem apagada" else text.replace(Regex("[\r\n]+"), " "),
                     color = MaterialTheme.colorScheme.onTertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

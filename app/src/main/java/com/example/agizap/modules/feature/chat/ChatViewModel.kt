@@ -15,6 +15,8 @@ import com.example.agizap.modules.repositories.ChatRepository
 import com.example.agizap.modules.repositories.MessageRepository
 import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -143,5 +145,19 @@ class ChatViewModel @Inject constructor(
         _uiState.value = uiState.value.copy(
             showPhoto = !uiState.value.showPhoto
         )
+    }
+
+    fun onShowDelete(){
+        _uiState.value = uiState.value.copy(
+            showDeleteAlert = !uiState.value.showDeleteAlert
+        )
+    }
+
+    fun onMessageDelete(list: Set<String>, chatId: String){
+        val db = Firebase.firestore
+        val chatRef = db.collection("chats").document(chatId)
+        list.forEach {
+            chatRef.collection("messages").document(it).update("deleted", true)
+        }
     }
 }

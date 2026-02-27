@@ -18,6 +18,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,9 @@ fun ChatScreen(
     val otherUser =
         uiState.users.find { it.id in uiState.chat.users && it.id != uiState.currentUser.id }
             ?: User()
-    Box() {
+    var selectedIds by remember { mutableStateOf(setOf<String>()) }
+    val anySelected = selectedIds.isNotEmpty()
+    Box{
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
@@ -61,7 +65,10 @@ fun ChatScreen(
                     user = otherUser,
                     chat = uiState.chat,
                     isGroup = (uiState.users.size > 2),
-                    onClickPhoto = { viewModel.onShowPhoto() }
+                    onClickPhoto = { viewModel.onShowPhoto() },
+                    anySelected = anySelected,
+                    onClickDelete = { viewModel.onShowDelete() },
+                    selected = selectedIds.size
                 )
             },
             bottomBar = {
@@ -99,20 +106,20 @@ fun ChatScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 20.dp),
+                    .padding(innerPadding),
                 state = listState,
                 verticalArrangement = Arrangement.Bottom
             ) {
-                items(messages) {
-                    if (viewModel.checkDateComponent(it)) {
+                items(messages) { message ->
+                    val isSelected = selectedIds.contains(message.id)
+                    if (viewModel.checkDateComponent(message)) {
                         Row(
                             Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             DateComponent(
                                 text = viewModel.formatTime(
-                                    time = viewModel.convertTime(it.time),
+                                    time = viewModel.convertTime(message.time),
                                     card = false
                                 )
                             )
@@ -120,18 +127,21 @@ fun ChatScreen(
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = if (viewModel.checkSent(uiState.currentUser, it))
+                        horizontalArrangement = if (viewModel.checkSent(uiState.currentUser, message))
                             Arrangement.End else Arrangement.Start
                     ) {
                         MessageComponent(
-                            message = it,
+                            message = message,
                             formatedTime = viewModel.getMessageTime(
-                                time = viewModel.convertTime(it.time),
+                                time = viewModel.convertTime(message.time),
                             ),
                             sent = viewModel.checkSent(
                                 user = uiState.currentUser,
-                                message = it
-                            )
+                                message = message
+                            ),
+                            selected = (selectedIds.find { message.id == it } != null),
+                            onChangeSelect = { selectedIds = if (isSelected) selectedIds - message.id else selectedIds + message.id },
+                            anySelected = anySelected,
                         )
                     }
 
@@ -154,7 +164,20 @@ fun ChatScreen(
                 onShowAlert = { viewModel.onShowAlert() },
                 onClickChat = {},
                 onHome = false
-
+            )
+        }
+        if (uiState.showDeleteAlert){
+            val quant = if(selectedIds.size==1) "a mensagem" else "${selectedIds.size} mesagens"
+            Alert(
+                title = "Deseja apagar $quant?",
+                confirmText = "Apagar para todos",
+                cancelText = "Cancelar",
+                confirmAction = {
+                    viewModel.onMessageDelete(selectedIds, chatId)
+                    selectedIds = emptySet()
+                    viewModel.onShowDelete()
+                },
+                cancelAction = { viewModel.onShowDelete() }
             )
         }
     }
