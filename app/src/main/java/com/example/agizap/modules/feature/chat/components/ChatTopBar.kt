@@ -1,6 +1,7 @@
 package com.example.agizap.modules.feature.chat.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.agizap.R
 import com.example.agizap.model.Chat
@@ -33,6 +35,7 @@ fun ChatTopBar(
     anySelected: Boolean,
     onClickDelete: () -> Unit,
     selected: Int,
+    usersString: String
 ) {
     TopAppBar(
         navigationIcon = {
@@ -45,10 +48,9 @@ fun ChatTopBar(
             )
         },
         title = {
-            if (anySelected){
+            if (anySelected) {
                 Text(selected.toString())
-            }
-            else {
+            } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ImageFromUrl(
                         if (!isGroup) user.photo else chat.photo,
@@ -58,18 +60,29 @@ fun ChatTopBar(
                             .clickable { onClickPhoto() }
                     )
                     Spacer(modifier = Modifier.size(15.dp))
-                    Text(if (!isGroup) user.name else chat.name)
+                    Column() {
+                        Text(if (!isGroup) user.name else chat.name)
+                        if (isGroup) {
+                            Text(
+                                usersString,
+                                style = MaterialTheme.typography.bodyMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        }
+                    }
                 }
-            }        },
+            }
+        },
         actions = {
-            if (anySelected){
+            if (anySelected) {
                 IconButtonComponent(
                     painter = painterResource(R.drawable.delete),
                     onClick = { onClickDelete() },
                     size = 30
                 )
-            }
-            else {
+            } else {
                 IconButtonComponent(
                     painter = painterResource(R.drawable.ligar),
                     onClick = { onClickOther() },

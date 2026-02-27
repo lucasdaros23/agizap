@@ -26,7 +26,17 @@ import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.components.SeenIcon
 
 @Composable
-fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, checkSent: Boolean, photo: String, onPhotoClick: () -> Unit) {
+fun ChatCard(
+    chat: Chat,
+    onclick: () -> Unit,
+    time: String,
+    chatName: String,
+    checkSent: Boolean,
+    photo: String,
+    onPhotoClick: () -> Unit,
+    isGroup: Boolean,
+    getUserName: (String) -> String
+) {
     Row(
         modifier = Modifier
             .clickable(onClick = { onclick() })
@@ -55,8 +65,10 @@ fun ChatCard(chat: Chat, onclick: () -> Unit, time: String, chatName: String, ch
                 if (checkSent && !lastMessage.deleted){
                     SeenIcon(modifier = Modifier.size(24.dp))
                 }
+                var cardText = if (!checkSent && isGroup) getUserName(lastMessage.userId) + ": " else ""
+                cardText += if (lastMessage.deleted) "\uD83D\uDEAB Mensagem apagada" else text.replace(Regex("[\r\n]+"), " ")
                 Text(
-                    text = if (lastMessage.deleted) "\uD83D\uDEAB Mensagem apagada" else text.replace(Regex("[\r\n]+"), " "),
+                    text = cardText,
                     color = MaterialTheme.colorScheme.onTertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

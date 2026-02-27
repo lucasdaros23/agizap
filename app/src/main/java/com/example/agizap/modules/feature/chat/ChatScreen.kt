@@ -68,7 +68,8 @@ fun ChatScreen(
                     onClickPhoto = { viewModel.onShowPhoto() },
                     anySelected = anySelected,
                     onClickDelete = { viewModel.onShowDelete() },
-                    selected = selectedIds.size
+                    selected = selectedIds.size,
+                    usersString = viewModel.chatMembersString()
                 )
             },
             bottomBar = {
@@ -142,6 +143,10 @@ fun ChatScreen(
                             selected = (selectedIds.find { message.id == it } != null),
                             onChangeSelect = { selectedIds = if (isSelected) selectedIds - message.id else selectedIds + message.id },
                             anySelected = anySelected,
+                            isGroup = (uiState.chat.users.size > 2),
+                            userName = viewModel.getUserName(message.userId),
+                            isRepeatedMessage = if(messages.indexOf(message) == 0) false
+                            else message.userId == messages[messages.indexOf(message) - 1].userId
                         )
                     }
 

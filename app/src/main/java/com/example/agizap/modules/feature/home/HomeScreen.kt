@@ -96,7 +96,9 @@ fun HomeScreen(
                                     chatId = it.id
                                 )
                                 viewModel.onShowPhoto()
-                            }
+                            },
+                            isGroup = it.users.size > 2,
+                            getUserName = { viewModel.getUserName(it) }
                         )
                     }
                 }

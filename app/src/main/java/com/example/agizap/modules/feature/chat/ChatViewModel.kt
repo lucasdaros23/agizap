@@ -160,4 +160,13 @@ class ChatViewModel @Inject constructor(
             chatRef.collection("messages").document(it).update("deleted", true)
         }
     }
+
+    fun chatMembersString(): String{
+        val users = uiState.value.users.filter { it.id in uiState.value.chat.users }
+        var usersString = ""
+        users.forEach { user -> usersString = usersString + user.name + if (users.indexOf(user) < users.size-1) ", " else "" }
+        return usersString
+    }
+
+    fun getUserName(id: String) = uiState.value.users.find { it.id == id }?.name ?: ""
 }

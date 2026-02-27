@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agizap.model.Message
 import com.example.agizap.modules.components.SeenIcon
+import org.w3c.dom.Text
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -36,6 +37,9 @@ fun MessageComponent(
     selected: Boolean,
     onChangeSelect: () -> Unit,
     anySelected: Boolean,
+    isGroup: Boolean,
+    userName: String,
+    isRepeatedMessage: Boolean
 ) {
     Box(
         Modifier
@@ -48,47 +52,58 @@ fun MessageComponent(
                     color = if (sent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(11.dp)
                 )
-                .clickable{}
+                .clickable {}
                 .align(alignment = if (sent) Alignment.CenterEnd else Alignment.CenterStart)
-
         ) {
             if (message.text.length < 17 || message.deleted) {
-                Row(
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Text(
-                        text = if (!message.deleted) message.text else "\uD83D\uDEAB Mensagem apagada",
-                        color = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.padding(
-                            end = 10.dp,
-                            top = 10.dp,
-                            start = 10.dp,
-                            bottom = 7.dp
-                        ),
-                        fontSize = 20.sp
-                    )
+                Column(){
+                    if (!sent && isGroup && !isRepeatedMessage){
+                        Text(
+                            userName,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(
+                                top = 5.dp,
+                                start = 10.dp,
+                                end = 10.dp
+                            )
+                        )
+                    }
                     Row(
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .weight(1f, fill = false),
                         verticalAlignment = Alignment.Bottom
                     ) {
-
                         Text(
-                            text = (formatedTime),
+                            text = if (!message.deleted) message.text else "\uD83D\uDEAB Mensagem apagada",
                             color = MaterialTheme.colorScheme.tertiary,
-                            fontSize = 13.sp,
+                            modifier = Modifier.padding(
+                                end = 10.dp,
+                                top = 5.dp,
+                                start = 10.dp,
+                                bottom = 7.dp
+                            ),
+                            fontSize = 20.sp
                         )
-                        if (sent && !message.deleted) {
-                            SeenIcon(
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .padding(bottom = 2.dp)
+                        Row(
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .weight(1f, fill = false),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+
+                            Text(
+                                text = (formatedTime),
+                                color = MaterialTheme.colorScheme.tertiary,
+                                fontSize = 13.sp,
                             )
+                            if (sent && !message.deleted) {
+                                SeenIcon(
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .padding(bottom = 2.dp)
+                                )
+                            }
                         }
                     }
-                }
-            } else {
+                }            } else {
                 Column(
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.End
@@ -150,6 +165,9 @@ private fun SentMessagePreview() {
         selected = false,
         onChangeSelect = {},
         anySelected = false,
+        isGroup = false,
+        userName = "",
+        isRepeatedMessage = false
     )
 }
 @Preview
@@ -162,5 +180,8 @@ private fun RecievedMessagePreview() {
         selected = true,
         onChangeSelect = {},
         anySelected = false,
+        isGroup = true,
+        userName = "sla",
+        isRepeatedMessage = false
     )
 }
