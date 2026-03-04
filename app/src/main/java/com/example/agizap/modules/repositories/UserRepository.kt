@@ -1,7 +1,7 @@
 package com.example.agizap.modules.repositories
 
 import android.util.Log
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.User
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
 import kotlinx.coroutines.channels.awaitClose

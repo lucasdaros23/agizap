@@ -19,8 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.agizap.R
-import com.example.agizap.model.Chat
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Chat
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.components.IconButtonComponent
 import com.example.agizap.modules.components.ImageFromUrl
 
@@ -35,7 +35,8 @@ fun ChatTopBar(
     anySelected: Boolean,
     onClickDelete: () -> Unit,
     selected: Int,
-    usersString: String
+    usersString: String,
+    onNameClick: () -> Unit
 ) {
     TopAppBar(
         navigationIcon = {
@@ -51,7 +52,10 @@ fun ChatTopBar(
             if (anySelected) {
                 Text(selected.toString())
             } else {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable{ onNameClick() }
+                ) {
                     ImageFromUrl(
                         if (!isGroup) user.photo else chat.photo,
                         modifier = Modifier

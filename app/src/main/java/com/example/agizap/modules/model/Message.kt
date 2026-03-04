@@ -1,4 +1,4 @@
-package com.example.agizap.model
+package com.example.agizap.modules.model
 
 
 data class Message(

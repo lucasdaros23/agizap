@@ -46,20 +46,6 @@ fun NavGraph(
             RegisterScreen(registerViewModel, navController)
         }
         composable(
-            route = Routes.INFO,
-            arguments = listOf(
-                navArgument("chatId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
-            val chatInfoViewModel: ChatInfoViewModel = hiltViewModel()
-            ChatInfoScreen(
-                viewModel = chatInfoViewModel,
-                chatId = chatId,
-                navController = navController
-            )
-        }
-        composable(
             route = Routes.CHAT,
             arguments = listOf(
                 navArgument("chatId") { type = NavType.StringType }
@@ -78,6 +64,20 @@ fun NavGraph(
             EditScreen(
                 editViewModel,
                 navController
+            )
+        }
+        composable(
+            route = Routes.INFO,
+            arguments = listOf(
+                navArgument("chatId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val chatInfoViewModel: ChatInfoViewModel = hiltViewModel()
+            ChatInfoScreen(
+                viewModel = chatInfoViewModel,
+                chatId = chatId,
+                navController = navController
             )
         }
     }

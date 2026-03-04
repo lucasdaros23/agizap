@@ -1,9 +1,7 @@
 package com.example.agizap.modules.repositories
 
 import android.util.Log
-import com.example.agizap.model.Chat
-import com.example.agizap.model.Message
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Message
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose

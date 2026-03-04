@@ -2,7 +2,6 @@ package com.example.agizap.modules.feature.edit
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,14 +28,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.agizap.R
-import com.example.agizap.model.User
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.feature.edit.components.EditNameDialog
 import com.example.agizap.modules.feature.edit.components.EditPhotoDialog
 import com.example.agizap.modules.feature.edit.components.EditTopBar
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 
 @SuppressLint("FlowOperatorInvokedInComposition")
 @Composable

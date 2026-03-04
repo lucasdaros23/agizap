@@ -1,6 +1,6 @@
 package com.example.agizap.modules.feature.login
 
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.User
 
 data class LoginUiState(
     val email: String = "",

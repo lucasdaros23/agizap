@@ -1,24 +1,19 @@
 package com.example.agizap.modules.feature.chat
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.agizap.model.Chat
-import com.example.agizap.model.Message
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Message
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.modules.repositories.ChatRepository
 import com.example.agizap.modules.repositories.MessageRepository
 import com.example.agizap.modules.repositories.UserRepository
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

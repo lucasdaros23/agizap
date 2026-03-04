@@ -2,24 +2,17 @@ package com.example.agizap.modules.feature.chatinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.agizap.model.Chat
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Chat
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.modules.repositories.ChatRepository
 import com.example.agizap.modules.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.emptyList
-import kotlin.collections.toList
 
 @HiltViewModel
 class ChatInfoViewModel@Inject constructor(
@@ -82,6 +75,8 @@ class ChatInfoViewModel@Inject constructor(
             textField = user.name,
         )
     }
+
+    fun getCurrentChat(chatId: String) = uiState.value.chats.find { it.id == chatId } ?: Chat()
 
     fun getChatName(chatId: String): String{
         val chat = uiState.value.chats.find { it.id == chatId } ?: Chat()

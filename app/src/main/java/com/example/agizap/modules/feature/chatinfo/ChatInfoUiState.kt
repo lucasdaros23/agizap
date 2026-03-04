@@ -1,7 +1,7 @@
 package com.example.agizap.modules.feature.chatinfo
 
-import com.example.agizap.model.Chat
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Chat
+import com.example.agizap.modules.model.User
 
 data class ChatInfoUiState(
     val users: List<User> = emptyList(),
@@ -10,5 +10,6 @@ data class ChatInfoUiState(
     val chat: Chat = Chat(),
     val user: User = User(),
     val backEnabled: Boolean = true,
-    val currentUser: User = User()
+    val currentUser: User = User(),
+    val currentChatId: String = ""
 )

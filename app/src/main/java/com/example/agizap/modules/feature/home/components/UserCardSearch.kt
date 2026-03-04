@@ -1,7 +1,6 @@
 package com.example.agizap.modules.feature.home.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.agizap.model.User
-import com.example.agizap.modules.components.ImageComponent
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.components.ImageFromUrl
 
 @Composable

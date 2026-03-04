@@ -1,7 +1,9 @@
 package com.example.agizap.modules.feature.chatinfo
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,10 +16,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.feature.chatinfo.components.ChatInfoTopBar
@@ -30,7 +34,9 @@ fun ChatInfoScreen(
 ) {
     LaunchedEffect(Unit) {
         viewModel.observeData()
+        viewModel.getCurrentChat(chatId)
     }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             ChatInfoTopBar(onReturn = {
@@ -60,9 +66,16 @@ fun ChatInfoScreen(
                             .clip(CircleShape)
                     )
                     Spacer(Modifier.size(20.dp))
-                    Text(viewModel.getChatName(chatId))
-                    Spacer(Modifier.size(20.dp))
-                    if (viewModel.getEmail(chatId) != "") Text(viewModel.getEmail(chatId))
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center){
+                        Text(viewModel.getChatName(chatId), style = MaterialTheme.typography.titleLarge)
+
+                    }
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        if (viewModel.getEmail(chatId) != "") viewModel.getEmail(chatId)
+                        else "${uiState.chat.users.size} membros"
+                    )
                 }
 
             }
