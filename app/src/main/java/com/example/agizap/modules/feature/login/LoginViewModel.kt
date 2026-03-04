@@ -1,10 +1,7 @@
 package com.example.agizap.modules.feature.login
 
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.agizap.model.User
 import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.modules.repositories.UserRepository
 import com.google.firebase.FirebaseNetworkException

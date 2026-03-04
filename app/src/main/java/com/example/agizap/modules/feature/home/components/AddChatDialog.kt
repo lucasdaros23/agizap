@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.components.Alert
 
 @OptIn(ExperimentalMaterial3Api::class)

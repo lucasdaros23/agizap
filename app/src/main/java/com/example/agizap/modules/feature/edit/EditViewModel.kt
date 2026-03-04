@@ -3,7 +3,7 @@ package com.example.agizap.modules.feature.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.navigation.Routes
 import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.modules.repositories.UserRepository

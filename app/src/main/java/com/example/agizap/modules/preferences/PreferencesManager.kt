@@ -1,8 +1,7 @@
 package com.example.agizap.modules.preferences
 
-import android.content.Context
 import android.content.SharedPreferences
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.User
 import com.google.gson.Gson
 
 class PreferencesManager(private val prefs: SharedPreferences) {

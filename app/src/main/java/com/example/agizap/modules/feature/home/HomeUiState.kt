@@ -1,7 +1,7 @@
 package com.example.agizap.modules.feature.home
 
-import com.example.agizap.model.Chat
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Chat
+import com.example.agizap.modules.model.User
 
 data class HomeUiState(
     val textField: String = "",

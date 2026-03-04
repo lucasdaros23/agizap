@@ -19,8 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.agizap.R
-import com.example.agizap.model.Chat
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Chat
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.components.IconButtonComponent
 import com.example.agizap.modules.components.ImageFromUrl
 

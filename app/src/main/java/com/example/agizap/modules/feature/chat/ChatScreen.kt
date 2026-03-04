@@ -22,10 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.agizap.model.Message
-import com.example.agizap.model.User
+import com.example.agizap.modules.model.Message
+import com.example.agizap.modules.model.User
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.UserProfilePicture
 import com.example.agizap.modules.feature.chat.components.Background
@@ -33,7 +32,6 @@ import com.example.agizap.modules.feature.chat.components.ChatBottomBar
 import com.example.agizap.modules.feature.chat.components.ChatTopBar
 import com.example.agizap.modules.feature.chat.components.DateComponent
 import com.example.agizap.modules.feature.chat.components.MessageComponent
-import kotlinx.coroutines.delay
 
 @SuppressLint("UnrememberedMutableState")
 @RequiresApi(Build.VERSION_CODES.O)
