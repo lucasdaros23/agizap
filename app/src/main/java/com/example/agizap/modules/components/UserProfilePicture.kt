@@ -29,13 +29,14 @@ import com.example.agizap.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfilePicture(
-    name: String,
-    photo: String,
-    onQuit: () -> Unit,
-    onClickChat: () -> Unit,
-    onShowAlert: () -> Unit,
-    onHome: Boolean,
-    onClickInfo: () -> Unit
+    name: String = "",
+    photo: String = "",
+    onQuit: () -> Unit = {},
+    onClickChat: () -> Unit = {},
+    onShowAlert: () -> Unit = {},
+    onChat: Boolean = false,
+    onInfo: Boolean = false,
+    onClickInfo: () -> Unit = {}
 ) {
     AlertDialog(
         onDismissRequest = { onQuit() },
@@ -44,13 +45,16 @@ fun UserProfilePicture(
         )
     ) {
         Surface(
-            modifier = Modifier.width(300.dp).height(330.dp)
+            modifier = Modifier
+                .width(300.dp)
+                .height(330.dp)
         ){
                 Box(
                 ) {
                     ImageFromUrl(
                         url = photo,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
                             .clip(shape = RectangleShape)
                     )
                     Box(
@@ -72,7 +76,7 @@ fun UserProfilePicture(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        if (onHome) {
+                        if (!onChat) {
                             IconButtonComponent(
                                 painter = painterResource(R.drawable.message),
                                 onClick = { onClickChat() },
@@ -89,15 +93,14 @@ fun UserProfilePicture(
                             onClick = { onShowAlert() },
                             size = 30
                         )
-                        IconButtonComponent(
-                            painter = painterResource(R.drawable.info),
-                            onClick = { onClickInfo() },
-                            size = 25
-                        )
+                        if(!onInfo){
+                            IconButtonComponent(
+                                painter = painterResource(R.drawable.info),
+                                onClick = { onClickInfo() },
+                                size = 25
+                            )
+                        }
                     }
-                }
-                Box {
-
                 }
             }
         }

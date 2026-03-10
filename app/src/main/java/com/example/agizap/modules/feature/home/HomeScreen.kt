@@ -167,7 +167,7 @@ fun HomeScreen(
                         navController.navigate("chat/${uiState.chatIdForPhoto}")
                         viewModel.onShowPhoto()
                     },
-                    onHome = true,
+                    onChat = false,
                     onClickInfo = {
                         navController.navigate("info/${uiState.chatIdForPhoto}")
                         viewModel.onShowPhoto() }

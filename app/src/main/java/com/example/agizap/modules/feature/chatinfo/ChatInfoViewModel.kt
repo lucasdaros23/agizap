@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.forEach
 
 @HiltViewModel
 class ChatInfoViewModel@Inject constructor(
@@ -104,5 +105,44 @@ class ChatInfoViewModel@Inject constructor(
             return user?.email ?: ""
         }
         else return ""
+    }
+
+    fun getChatUsers(chatId: String) : List<User> {
+        val usersString = (uiState.value.chats.find { it.id == chatId } ?: Chat()).users
+        val currentUser = uiState.value.currentUser
+        val list = mutableListOf(currentUser)
+        uiState.value.users.forEach {
+            if (usersString.contains(it.id) && it.id != currentUser.id) list.add(it)
+        }
+        return list
+    }
+
+    fun onShowPhoto(){
+        _uiState.value = uiState.value.copy(
+            showUserPhoto = !uiState.value.showUserPhoto
+        )
+    }
+
+    fun onShowAlert() {
+        _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
+    }
+
+    fun setUser(user: User){
+        _uiState.value = uiState.value.copy(
+            photoUser = user
+        )
+    }
+
+    fun findUserChatId(userId: String): String{
+        val list = listOf(userId, uiState.value.currentUser.id)
+        val chat = uiState.value.chats.find {
+            it.users.size == 2 &&
+                    it.users.containsAll(list) }
+        return chat?.id ?: addChat(list)
+    }
+    fun addChat(users: List<String>): String {
+        val chat = Chat(users = users)
+        val chatId = chatRepo.addChat(chat)
+        return chatId
     }
 }

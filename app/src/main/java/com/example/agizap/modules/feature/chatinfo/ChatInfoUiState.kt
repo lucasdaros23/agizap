@@ -11,5 +11,8 @@ data class ChatInfoUiState(
     val user: User = User(),
     val backEnabled: Boolean = true,
     val currentUser: User = User(),
-    val currentChatId: String = ""
+    val currentChatId: String = "",
+    val showUserPhoto: Boolean = false,
+    val photoUser: User = User(),
+    val showAlert: Boolean = false,
 )
