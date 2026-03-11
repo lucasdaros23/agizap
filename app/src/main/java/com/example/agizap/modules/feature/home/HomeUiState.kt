@@ -14,4 +14,5 @@ data class HomeUiState(
     val nameForPhoto: String = "",
     val imageForPhoto: String = "",
     val chatIdForPhoto: String = "",
+    val chatInfoId: String = ""
 )

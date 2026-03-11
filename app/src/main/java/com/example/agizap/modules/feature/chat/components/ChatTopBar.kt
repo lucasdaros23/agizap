@@ -35,7 +35,8 @@ fun ChatTopBar(
     anySelected: Boolean,
     onClickDelete: () -> Unit,
     selected: Int,
-    usersString: String
+    usersString: String,
+    onNameClick: () -> Unit
 ) {
     TopAppBar(
         navigationIcon = {
@@ -51,7 +52,10 @@ fun ChatTopBar(
             if (anySelected) {
                 Text(selected.toString())
             } else {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable{ onNameClick() }
+                ) {
                     ImageFromUrl(
                         if (!isGroup) user.photo else chat.photo,
                         modifier = Modifier

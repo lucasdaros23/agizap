@@ -67,7 +67,9 @@ fun ChatScreen(
                     anySelected = anySelected,
                     onClickDelete = { viewModel.onShowDelete() },
                     selected = selectedIds.size,
-                    usersString = viewModel.chatMembersString()
+                    usersString = viewModel.chatMembersString(),
+                    onNameClick = { navController.navigate("info/$chatId") }
+
                 )
             },
             bottomBar = {
@@ -166,7 +168,8 @@ fun ChatScreen(
                 onQuit = { viewModel.onShowPhoto() },
                 onShowAlert = { viewModel.onShowAlert() },
                 onClickChat = {},
-                onHome = false
+                onChat = true,
+                onClickInfo = { navController.navigate("info/$chatId") }
             )
         }
         if (uiState.showDeleteAlert){

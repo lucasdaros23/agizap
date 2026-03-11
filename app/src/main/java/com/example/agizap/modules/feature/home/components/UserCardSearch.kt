@@ -38,8 +38,8 @@ fun UserCardSearch(user: User, onClick: ()-> Unit) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun UserCardSearchPreview() {
-    UserCardSearch(User(), {})
+    UserCardSearch(User(name = "lucas"), {})
 }

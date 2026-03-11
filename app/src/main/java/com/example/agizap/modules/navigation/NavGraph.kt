@@ -13,6 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.agizap.modules.feature.chat.ChatScreen
 import com.example.agizap.modules.feature.chat.ChatViewModel
+import com.example.agizap.modules.feature.chatinfo.ChatInfoScreen
+import com.example.agizap.modules.feature.chatinfo.ChatInfoViewModel
 import com.example.agizap.modules.feature.edit.EditScreen
 import com.example.agizap.modules.feature.edit.EditViewModel
 import com.example.agizap.modules.feature.login.LoginScreen
@@ -62,6 +64,20 @@ fun NavGraph(
             EditScreen(
                 editViewModel,
                 navController
+            )
+        }
+        composable(
+            route = Routes.INFO,
+            arguments = listOf(
+                navArgument("chatId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val chatInfoViewModel: ChatInfoViewModel = hiltViewModel()
+            ChatInfoScreen(
+                viewModel = chatInfoViewModel,
+                chatId = chatId,
+                navController = navController
             )
         }
     }

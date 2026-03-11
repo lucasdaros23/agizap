@@ -230,4 +230,10 @@ class HomeViewModel @Inject constructor(
     fun onCheckedClick(checked: Boolean, selectedIds: Set<String>, user: User) = if (checked) selectedIds - user.id else selectedIds + user.id
 
     fun getUserName(id: String) = uiState.value.users.find { it.id == id }?.name ?: ""
+
+    fun changeChatInfo(id: String){
+        _uiState.value = uiState.value.copy(
+            chatInfoId = id
+        )
+    }
 }
