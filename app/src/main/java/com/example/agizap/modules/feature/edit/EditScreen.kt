@@ -30,7 +30,7 @@ import androidx.navigation.NavHostController
 import com.example.agizap.R
 import com.example.agizap.modules.components.Alert
 import com.example.agizap.modules.components.ImageFromUrl
-import com.example.agizap.modules.feature.edit.components.EditNameDialog
+import com.example.agizap.modules.components.EditNameDialog
 import com.example.agizap.modules.feature.edit.components.EditPhotoDialog
 import com.example.agizap.modules.feature.edit.components.EditTopBar
 
@@ -141,7 +141,8 @@ fun EditScreen(
                         cancelAction = {
                             viewModel.onEditNameAlert()
                             viewModel.onTextNameChange(user.name)
-                        }
+                        },
+                        title = "Editar nome"
                     )
                 }
                 if (uiState.showEditPhoto) {

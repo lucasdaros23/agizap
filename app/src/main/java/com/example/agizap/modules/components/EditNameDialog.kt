@@ -1,4 +1,4 @@
-package com.example.agizap.modules.feature.edit.components
+package com.example.agizap.modules.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -6,14 +6,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.agizap.modules.components.Alert
-import com.example.agizap.modules.components.TextFieldComponent
 
 @Composable
 fun EditNameDialog(
@@ -21,9 +18,10 @@ fun EditNameDialog(
     onValueChange: (String) -> Unit,
     confirmAction: () -> Unit,
     cancelAction: () -> Unit,
+    title: String,
 ) {
     Alert(
-        title = "Editar nome",
+        title = title,
         confirmText = "Confirmar",
         confirmAction = { confirmAction() },
         cancelText = "Cancelar",
@@ -48,5 +46,4 @@ fun EditNameDialog(
             }
         }
     )
-
 }

@@ -7,6 +7,8 @@ import com.example.agizap.modules.model.User
 import com.example.agizap.modules.preferences.PreferencesManager
 import com.example.agizap.modules.repositories.ChatRepository
 import com.example.agizap.modules.repositories.UserRepository
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -127,9 +129,19 @@ class ChatInfoViewModel@Inject constructor(
         _uiState.value = uiState.value.copy(showAlert = !uiState.value.showAlert)
     }
 
+    fun onShowEditNameAlert() {
+        _uiState.value = uiState.value.copy(showEditNameAlert = !uiState.value.showEditNameAlert)
+    }
+
     fun setUser(user: User){
         _uiState.value = uiState.value.copy(
             photoUser = user
+        )
+    }
+
+    fun setAlertText(text: String){
+        _uiState.value = uiState.value.copy(
+            alertText = text
         )
     }
 
@@ -144,5 +156,32 @@ class ChatInfoViewModel@Inject constructor(
         val chat = Chat(users = users)
         val chatId = chatRepo.addChat(chat)
         return chatId
+    }
+
+    fun editName(name: String, chatId: String){
+        val db = Firebase.firestore
+        val docRef = db.collection("chats").document(chatId)
+        if (name.trim() != ""){
+            docRef.update("name", name)
+        }
+    }
+
+    fun editUser(name: String, photo: String, active: Boolean) {
+        val db = Firebase.firestore
+        val docRef = db.collection("users").document(uiState.value.currentUser.id)
+        var user = uiState.value.currentUser
+        if (name.trim() != "") {
+            docRef.update("name", name)
+            user = user.copy(name = name)
+        }
+        if (photo != "") {
+            docRef.update("photo", photo)
+            user = user.copy(photo = photo)
+        }
+        if (!active) {
+            docRef.update("active", false)
+            user = user.copy(active = false)
+        }
+        prefs.saveUser(user)
     }
 }

@@ -22,10 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.example.agizap.R
 import com.example.agizap.modules.components.Alert
+import com.example.agizap.modules.components.EditNameDialog
+import com.example.agizap.modules.components.IconButtonComponent
 import com.example.agizap.modules.components.ImageFromUrl
 import com.example.agizap.modules.components.UserProfilePicture
 import com.example.agizap.modules.feature.chatinfo.components.ChatInfoTopBar
@@ -76,36 +80,55 @@ fun ChatInfoScreen(
                             .clip(CircleShape)
                     )
                     Spacer(Modifier.size(20.dp))
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center){
-                        Text(viewModel.getChatName(chatId), style = MaterialTheme.typography.titleLarge)
-
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(Modifier.size(40.dp))
+                        Text(
+                            text = viewModel.getChatName(chatId),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        IconButtonComponent(
+                            painter = painterResource(R.drawable.edit),
+                            onClick = {
+                                viewModel.onTextNameChange(chat.name)
+                                viewModel.onShowEditNameAlert()
+                            },
+                            size = 20,
+                        )
                     }
                     Spacer(Modifier.size(10.dp))
                     Text(
                         if (viewModel.getEmail(chatId) != "") viewModel.getEmail(chatId)
                         else "${viewModel.getChatUsers(chatId).size} membros"
                     )
+                    Spacer(Modifier.size(40.dp))
                     Column() {
-                        users.forEach { user ->
-                            GroupUser(
-                                user = user,
-                                isCurrentUser = user == uiState.currentUser,
-                                onClick = {
-                                    if (user.id == uiState.currentUser.id) navController.navigate(Routes.EDIT)
-                                    else {
-                                        viewModel.setUser(user)
-                                        viewModel.onShowPhoto()
+                        if (users.size > 2) {
+                            users.forEach { user ->
+                                GroupUser(
+                                    user = user,
+                                    isCurrentUser = user == uiState.currentUser,
+                                    onClick = {
+                                        if (user.id == uiState.currentUser.id) navController.navigate(
+                                            Routes.EDIT
+                                        )
+                                        else {
+                                            viewModel.setUser(user)
+                                            viewModel.onShowPhoto()
+                                        }
                                     }
-                                }
-                            )
-                            Spacer(modifier = Modifier.size(10.dp))
+                                )
+                                Spacer(modifier = Modifier.size(15.dp))
+                            }
                         }
                     }
                 }
 
             }
-            if (uiState.showUserPhoto){
+            if (uiState.showUserPhoto) {
                 UserProfilePicture(
                     name = uiState.photoUser.name,
                     photo = uiState.photoUser.photo,
@@ -119,9 +142,27 @@ fun ChatInfoScreen(
                     onInfo = true
                 )
             }
-            if(uiState.showAlert){
+            if (uiState.showAlert) {
                 Alert(
-
+                    title = uiState.alertText,
+                    confirmAction = { viewModel.onShowAlert() },
+                    cancelAction = { viewModel.onShowAlert() },
+                    confirmText = "OK"
+                )
+            }
+            if (uiState.showEditNameAlert){
+                EditNameDialog(
+                    value = uiState.textField,
+                    onValueChange = { viewModel.onTextNameChange(it) },
+                    confirmAction = {
+                        viewModel.editName(name = uiState.textField, chatId = chatId)
+                        viewModel.onShowEditNameAlert()
+                    },
+                    cancelAction = {
+                        viewModel.onShowEditNameAlert()
+                        viewModel.onTextNameChange(chat.name)
+                    },
+                    title = "Editar nome do grupo",
                 )
             }
         }

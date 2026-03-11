@@ -15,4 +15,6 @@ data class ChatInfoUiState(
     val showUserPhoto: Boolean = false,
     val photoUser: User = User(),
     val showAlert: Boolean = false,
+    val alertText: String = "Essa função ainda não foi implementada",
+    val showEditNameAlert: Boolean = false,
 )
